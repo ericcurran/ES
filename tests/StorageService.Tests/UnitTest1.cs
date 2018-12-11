@@ -1,19 +1,45 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace StorageService.Tests
 {
-    public class UnitTest1
+    public class StorageServiceTests
     {
+        private readonly string _connectionString = "DefaultEndpointsProtocol=https;AccountName=casedocuments;AccountKey=jhAd1rdcohb6ZnPfHvcNvMLHpGUWDDN7/P2z2fBu3peQg/JZfnya49Xrv840DBwGLdhRlgt/1oXxD39Btrr5Lw==;EndpointSuffix=core.windows.net";
+        private readonly string _containerName = "documents-test";
         [Fact]
-        public async Task ConnectionTest()
+        public async Task ContainerExistTest()
         {
-            var connString = "DefaultEndpointsProtocol=https;AccountName=casedocuments;AccountKey=jhAd1rdcohb6ZnPfHvcNvMLHpGUWDDN7/P2z2fBu3peQg/JZfnya49Xrv840DBwGLdhRlgt/1oXxD39Btrr5Lw==;EndpointSuffix=core.windows.net";
-            var service = new StorageService(connString);
+            
+            var service = new StorageService(_connectionString, _containerName);
 
-            await service.ProcessAsync();
+            bool exist = await service.IsContainerExist();
 
+            Assert.True(exist);
+        }
+
+        [Fact]
+        public async Task ContainerListItemsTest()
+        {
+
+            var service = new StorageService(_connectionString, _containerName);
+
+            var items = await service.GetContainerItems();
+            items.FirstOrDefault();
+
+            Assert.NotEmpty(items);
+        }
+
+        [Fact]
+        public async Task IsDirectoryExistTest()
+        {
+
+            var service = new StorageService(_connectionString, _containerName);
+                       
+            Assert.True(await service.IsDirectoryExist("123"));
+            Assert.False(await service.IsDirectoryExist("12sw3"));
         }
     }
 }

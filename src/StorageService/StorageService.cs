@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -8,12 +9,60 @@ namespace StorageService
 {
     public class StorageService
     {
-        private readonly string _blobConnectionString;
+        private readonly CloudStorageAccount storageAccount;
+        private readonly CloudBlobClient cloudBlobClient;
+        private readonly CloudBlobContainer cloudBlobContainer;
 
-        public StorageService(string blobConnectionString)
+        public StorageService(string blobConnectionString, string containerName )
         {
-            _blobConnectionString = blobConnectionString;
+          if(!CloudStorageAccount.TryParse(blobConnectionString, out storageAccount))
+            {
+                throw new StorageException("A valid Storage account conection string is not provided");
+            }
+            cloudBlobClient = storageAccount.CreateCloudBlobClient();
+            cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
+           
         }
+
+        public async Task<bool> IsContainerExist()
+        {
+            return await cloudBlobContainer.ExistsAsync();
+        }
+
+
+        public async Task<bool> IsDirectoryExist(string directoryName)
+        {
+            var containerItems = await GetContainerItems();
+            foreach (var item in containerItems)
+            {
+                if (item is CloudBlobDirectory)
+                {
+                    var dir = (CloudBlobDirectory)item;
+                    var dirName = dir.Prefix.Substring(0, dir.Prefix.Length - 1);
+                    if (dirName == directoryName)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public async Task<IReadOnlyCollection<IListBlobItem>> GetContainerItems()
+        {
+            BlobContinuationToken blobContinuationToken = null;
+            var items = new List<IListBlobItem>();
+            do
+            {
+                var results = await cloudBlobContainer.ListBlobsSegmentedAsync(null, blobContinuationToken);
+                // Get the value of the continuation token returned by the listing call.
+                blobContinuationToken = results.ContinuationToken;
+                items.AddRange(results.Results);               
+            } while (blobContinuationToken != null);
+            return items;
+        }
+
+
         
 
         public async Task ProcessAsync()
@@ -24,13 +73,8 @@ namespace StorageService
             string sourceFile = null;
             string destinationFile = null;
 
-            
-
-            // Check whether the connection string can be parsed.
-            if (CloudStorageAccount.TryParse(_blobConnectionString, out storageAccount))
-            {
-                try
-                {
+                  // Check whether the connection string can be parsed.
+           
                     // Create the CloudBlobClient that represents the Blob storage endpoint for the storage account.
                     CloudBlobClient cloudBlobClient = storageAccount.CreateCloudBlobClient();
 
@@ -84,13 +128,7 @@ namespace StorageService
                     Console.WriteLine("Downloading blob to {0}", destinationFile);
                     Console.WriteLine();
                     await cloudBlockBlob.DownloadToFileAsync(destinationFile, FileMode.Create);
-                }
-                catch (StorageException ex)
-                {
-                    Console.WriteLine("Error returned from the service: {0}", ex.Message);
-                }
-                finally
-                {
+              
                     Console.WriteLine("Press any key to delete the sample files and example container.");
                     Console.ReadLine();
                     // Clean up resources. This includes the container and the two temp files.
@@ -102,16 +140,8 @@ namespace StorageService
                     Console.WriteLine("Deleting the local source file and local downloaded files");
                     Console.WriteLine();
                     File.Delete(sourceFile);
-                    File.Delete(destinationFile);
-                }
-            }
-            else
-            {
-                Console.WriteLine(
-                    "A connection string has not been defined in the system environment variables. " +
-                    "Add a environment variable named 'storageconnectionstring' with your storage " +
-                    "connection string as a value.");
-            }
+                    File.Delete(destinationFile);                
+           
         }
     }
 }

@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FtpService", "src\FtpServic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolderMonitoring", "src\FolderMonitoring\FolderMonitoring.csproj", "{FD5703B1-D0B9-456C-8D43-F341AC083C87}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FtpService.Tests", "tests\FtpService.Tests\FtpService.Tests.csproj", "{B7EA096C-DD9A-41FA-B742-6C9904DF0270}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{FD5703B1-D0B9-456C-8D43-F341AC083C87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD5703B1-D0B9-456C-8D43-F341AC083C87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD5703B1-D0B9-456C-8D43-F341AC083C87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7EA096C-DD9A-41FA-B742-6C9904DF0270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7EA096C-DD9A-41FA-B742-6C9904DF0270}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7EA096C-DD9A-41FA-B742-6C9904DF0270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7EA096C-DD9A-41FA-B742-6C9904DF0270}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{60D95E0A-4199-4A3F-ABA8-623C77F64E35} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
 		{EE292623-1C8C-4271-A12C-C1F2C988D3DA} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
 		{FD5703B1-D0B9-456C-8D43-F341AC083C87} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
+		{B7EA096C-DD9A-41FA-B742-6C9904DF0270} = {B531CE0F-2B92-4C16-87B4-DE9E449E4EBC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7E7DBCA8-1A9A-4E05-9562-9C5FE3FC470D}
