@@ -4,7 +4,7 @@ using Microsoft.Azure.WebJobs.Host;
 
 namespace FolderMonitoring
 {
-    public static class FolderMonitoring
+    public static class FtpFunction
     {
         [FunctionName("FolderMonitoring")]
         public static void Run([TimerTrigger("* */5 * * * *")]TimerInfo myTimer, TraceWriter log)
