@@ -1,4 +1,4 @@
-﻿using FolderMonitoring;
+﻿using FtpFunction;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +8,7 @@ using System.Text;
 using Willezone.Azure.WebJobs.Extensions.DependencyInjection;
 
 [assembly: WebJobsStartup(typeof(Startup))]
-namespace FolderMonitoring
+namespace FtpFunction
 {
     internal class Startup : IWebJobsStartup
     {
