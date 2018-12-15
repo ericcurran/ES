@@ -1,16 +1,33 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FtpService;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 
 namespace FtpFunction
 {
-    public static class Function1
+    public class Function1
     {
-        [FunctionName("Function1")]
-        public static void Run([TimerTrigger("*/5 * * * * *")]TimerInfo myTimer, ILogger log)
+        private readonly FtpMonitoringService _ftpService;
+
+        public Function1(FtpMonitoringService ftpService)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            _ftpService = ftpService;
         }
+
+        [FunctionName("Function1")]
+        public async Task Run([TimerTrigger("*/1 * * * * *")]TimerInfo myTimer, ILogger log)
+        {
+            var files = await _ftpService.GetFileList();
+
+            foreach (var f in files)
+            {
+                log.LogInformation(f);
+            }
+        }
+
+        
     }
 }

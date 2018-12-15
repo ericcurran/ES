@@ -13,7 +13,7 @@ namespace FtpService.Tests
             string url = "ftp://waws-prod-am2-165.ftp.azurewebsites.windows.net/site/test";
             string login = @"renderhubserver\RenderHubAdmin";
             string psw = @"7j9u*@jyB29729S9";
-            var ftpService = new FtpService(url,login,psw);
+            var ftpService = new FtpMonitoringService(url,login,psw);
 
             string[] fileName = await ftpService.GetFileList();
             Assert.NotEmpty(fileName);
@@ -25,7 +25,7 @@ namespace FtpService.Tests
             string url = "ftp://waws-prod-am2-165.ftp.azurewebsites.windows.net/site/test";
             string login = @"renderhubserver\RenderHubAdmin";
             string psw = @"7j9u*@jyB29729S9";
-            var ftpService = new FtpService(url, login, psw);
+            var ftpService = new FtpMonitoringService(url, login, psw);
             string fileName = "1234567890123456_123456789.zip";
 
             Stream file = await ftpService.ReadFile(fileName);

@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace FtpService
 {
-    public class FtpService
+    public class FtpMonitoringService
     {
         private readonly string _ftpUrl;
         private readonly string _ftpLogin;
         private readonly string _ftpPassword;
 
-        public FtpService(string ftpUrl, string ftpLogin, string ftpPassword)
+        public FtpMonitoringService(string ftpUrl, string ftpLogin, string ftpPassword)
         {
             CheckaArguments(ftpUrl, ftpLogin, ftpPassword);
             _ftpUrl = ftpUrl;
