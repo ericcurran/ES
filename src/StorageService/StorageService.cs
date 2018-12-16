@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace StorageService
 {
-    public class StorageService
+    public class BlobStorageService
     {
         private readonly CloudStorageAccount storageAccount;
         private readonly CloudBlobClient cloudBlobClient;
         private readonly CloudBlobContainer cloudBlobContainer;
 
-        public StorageService(string blobConnectionString, string containerName )
+        public BlobStorageService(string blobConnectionString, string containerName )
         {
           if(!CloudStorageAccount.TryParse(blobConnectionString, out storageAccount))
             {
@@ -62,7 +62,11 @@ namespace StorageService
             return items;
         }
 
-
+        public async Task SaveFileToBlob(string localFileName, Stream sourceFile)
+        {
+            CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(localFileName);
+            await cloudBlockBlob.UploadFromStreamAsync(sourceFile);
+        }
         
 
         public async Task ProcessAsync()

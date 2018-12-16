@@ -10,13 +10,15 @@ namespace FtpService
         private readonly string _ftpUrl;
         private readonly string _ftpLogin;
         private readonly string _ftpPassword;
+        private readonly string _processedDir;
 
-        public FtpMonitoringService(string ftpUrl, string ftpLogin, string ftpPassword)
+        public FtpMonitoringService(string ftpUrl, string ftpLogin, string ftpPassword, string processedDir)
         {
             CheckaArguments(ftpUrl, ftpLogin, ftpPassword);
             _ftpUrl = ftpUrl;
             _ftpLogin = ftpLogin;
             _ftpPassword = ftpPassword;
+            _processedDir = processedDir;
         }
 
         public async Task<string[]> GetFileList()
@@ -57,6 +59,16 @@ namespace FtpService
             response.Close();
 
             return ms;
+        }
+
+        public async Task MoveFileToProcessed(string fileName)
+        {
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create($"{_ftpUrl}/{fileName}");
+            request.Method = WebRequestMethods.Ftp.Rename;
+            request.Credentials = new NetworkCredential(_ftpLogin, _ftpPassword);
+            request.RenameTo = $"{_processedDir}/{fileName}";
+            FtpWebResponse response = (FtpWebResponse)await request.GetResponseAsync();
+            response.Close();
         }
 
         private string[] GetFileList(string responseString)

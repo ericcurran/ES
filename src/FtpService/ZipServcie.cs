@@ -9,15 +9,14 @@ namespace FtpService
 {
     public class ZipServcie
     {
-        public string[] UnzipFile(Stream stream)
+        public IEnumerable<ZipArchiveEntry> UnzipFile(Stream stream)
         {
-           var zipArchive =  new ZipArchive(stream);
-           
+            var zipArchive = new ZipArchive(stream);
+
             foreach (var entry in zipArchive.Entries)
             {
-                var entryStream = entry.Open();
+                yield return entry;
             }
-            return zipArchive.Entries.Select(e => e.FullName).ToArray();
         }
     }
 }

@@ -15,6 +15,7 @@ namespace DbService
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+             
         }
 
         public DbSet<RequestPackage> RequestPackages { get; set; }

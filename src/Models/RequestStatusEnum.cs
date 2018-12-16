@@ -1,6 +1,6 @@
 ﻿namespace Models
 {
-    public enum PackageStatusEnum
+    public enum RequestStatusEnum
     {
         New = 1,
         Unziped = 2,

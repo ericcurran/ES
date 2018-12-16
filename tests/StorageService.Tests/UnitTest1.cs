@@ -13,7 +13,7 @@ namespace StorageService.Tests
         public async Task ContainerExistTest()
         {
             
-            var service = new StorageService(_connectionString, _containerName);
+            var service = new BlobStorageService(_connectionString, _containerName);
 
             bool exist = await service.IsContainerExist();
 
@@ -24,7 +24,7 @@ namespace StorageService.Tests
         public async Task ContainerListItemsTest()
         {
 
-            var service = new StorageService(_connectionString, _containerName);
+            var service = new BlobStorageService(_connectionString, _containerName);
 
             var items = await service.GetContainerItems();
             items.FirstOrDefault();
@@ -36,7 +36,7 @@ namespace StorageService.Tests
         public async Task IsDirectoryExistTest()
         {
 
-            var service = new StorageService(_connectionString, _containerName);
+            var service = new BlobStorageService(_connectionString, _containerName);
                        
             Assert.True(await service.IsDirectoryExist("123"));
             Assert.False(await service.IsDirectoryExist("12sw3"));
