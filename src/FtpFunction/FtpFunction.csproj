@@ -7,9 +7,11 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
+    <PackageReference Include="Willezone.Azure.WebJobs.Extensions.DependencyInjection" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FtpService\FtpService.csproj" />
+     <ProjectReference Include="..\FtpService\FtpService.csproj" />
+    <ProjectReference Include="..\FunctionWorkaround\FunctionWorkaround.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

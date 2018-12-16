@@ -13,33 +13,32 @@ using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Willezone.Azure.WebJobs.Extensions.DependencyInjection;
 
 namespace FtpFunction
 {
-    public class RequestProcessing
+    public static class RequestProcessing
     {
-        private readonly FtpMonitoringService _ftpService;
-        
-        public RequestProcessing(FtpMonitoringService ftpService)
-        {
-            _ftpService = ftpService;            
-        }
-
         [FunctionName("FtpNotification")]
-        public static async Task<HttpResponseMessage> Post([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestMessage req, ILogger log)
+        public static async Task<HttpResponseMessage> Post(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestMessage req, 
+                                                                          ILogger log,
+                                                    [Inject] FtpMonitoringService servie,
+                                                    [Inject] IConfiguration       config)
         {
 
             string content = await req.Content.ReadAsStringAsync();
-            
-            log.LogInformation(content);
-            return req.CreateResponse(HttpStatusCode.OK);
-           
-            //var files = await _ftpService.GetFileList();
 
-            //foreach (var f in files)
-            //{
-            //    log.LogInformation(f);
-            //}
+            foreach (var kvp in config.AsEnumerable())
+            {
+                log.LogInformation($"{kvp.Key}: {kvp.Value}");
+            }
+             
+            foreach (var item in await servie.GetFileList())
+            {
+                log.LogInformation(item);
+            }
+            return req.CreateResponse(HttpStatusCode.OK);
         }
 
         [FunctionName("HttpFunction")]

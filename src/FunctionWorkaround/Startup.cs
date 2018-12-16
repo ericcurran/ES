@@ -2,27 +2,32 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using FtpService;
 using Microsoft.Extensions.Configuration;
+using Willezone.Azure.WebJobs.Extensions.DependencyInjection;
 
 [assembly: WebJobsStartup(typeof(Startup))]
 namespace FtpFunction
 {
     internal class Startup : IWebJobsStartup
     {
-       
+
         public void Configure(IWebJobsBuilder builder)
         {
-            var config = new ConfigurationBuilder()
-                         .AddEnvironmentVariables()
-                         .Build();
-            builder.Services.AddSingleton<IConfiguration>(config);
+            builder.AddDependencyInjection(ConfigDi);          
+        }
 
-            builder.Services.AddTransient<FtpMonitoringService, FtpMonitoringService>((s) =>
+        private void ConfigDi(IServiceCollection services)
+        {
+            var config = new ConfigurationBuilder()
+                        .AddEnvironmentVariables()
+                        .Build();
+            services.AddSingleton<IConfiguration>(config);
+
+            var connectionString = config.GetConnectionString("RequestManagmentDb");
+            //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+            services.AddTransient<FtpMonitoringService, FtpMonitoringService>((s) =>
             {
                 string url = config["FtpUrl"];
                 string login = config["FtpLogin"];
