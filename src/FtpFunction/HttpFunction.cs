@@ -1,47 +1,17 @@
 using System;
 using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
-using FtpService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace FtpFunction
 {
-    public class RequestProcessing
+    public static class HttpFunction
     {
-        private readonly FtpMonitoringService _ftpService;
-        
-        public RequestProcessing(FtpMonitoringService ftpService)
-        {
-            _ftpService = ftpService;            
-        }
-
-        [FunctionName("FtpNotification")]
-        public static async Task<HttpResponseMessage> Post([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestMessage req, ILogger log)
-        {
-
-            string content = await req.Content.ReadAsStringAsync();
-            
-            log.LogInformation(content);
-            return req.CreateResponse(HttpStatusCode.OK);
-           
-            //var files = await _ftpService.GetFileList();
-
-            //foreach (var f in files)
-            //{
-            //    log.LogInformation(f);
-            //}
-        }
-
         [FunctionName("HttpFunction")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,

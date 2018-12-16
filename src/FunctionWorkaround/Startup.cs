@@ -7,20 +7,26 @@ using System.Collections.Generic;
 using System.Text;
 
 using FtpService;
+using Microsoft.Extensions.Configuration;
 
 [assembly: WebJobsStartup(typeof(Startup))]
 namespace FtpFunction
 {
     internal class Startup : IWebJobsStartup
     {
-        
+       
         public void Configure(IWebJobsBuilder builder)
         {
+            var config = new ConfigurationBuilder()
+                         .AddEnvironmentVariables()
+                         .Build();
+            builder.Services.AddSingleton<IConfiguration>(config);
+
             builder.Services.AddTransient<FtpMonitoringService, FtpMonitoringService>((s) =>
             {
-                string url = "ftp://waws-prod-am2-165.ftp.azurewebsites.windows.net/site/test";
-                string login = @"renderhubserver\RenderHubAdmin";
-                string psw = "7j9u*@jyB29729S9";
+                string url = config["FtpUrl"];
+                string login = config["FtpLogin"];
+                string psw = config["FtpPasword"];
                 return new FtpMonitoringService(url, login, psw);
             });
         }

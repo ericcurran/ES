@@ -17,9 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FtpService", "src\FtpServic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FtpService.Tests", "tests\FtpService.Tests\FtpService.Tests.csproj", "{B7EA096C-DD9A-41FA-B742-6C9904DF0270}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpFunction", "src\FtpFunction\FtpFunction.csproj", "{CC518A2F-DD2D-46EB-84C8-44DFB59338BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FtpFunction", "src\FtpFunction\FtpFunction.csproj", "{CC518A2F-DD2D-46EB-84C8-44DFB59338BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionWorkaround", "src\FunctionWorkaround\FunctionWorkaround.csproj", "{C6DC5227-1FF4-40D6-A8A0-890B1A098697}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionWorkaround", "src\FunctionWorkaround\FunctionWorkaround.csproj", "{C6DC5227-1FF4-40D6-A8A0-890B1A098697}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbService", "src\DbService\DbService.csproj", "{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,10 @@ Global
 		{C6DC5227-1FF4-40D6-A8A0-890B1A098697}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6DC5227-1FF4-40D6-A8A0-890B1A098697}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6DC5227-1FF4-40D6-A8A0-890B1A098697}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +73,7 @@ Global
 		{B7EA096C-DD9A-41FA-B742-6C9904DF0270} = {B531CE0F-2B92-4C16-87B4-DE9E449E4EBC}
 		{CC518A2F-DD2D-46EB-84C8-44DFB59338BE} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
 		{C6DC5227-1FF4-40D6-A8A0-890B1A098697} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
+		{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7E7DBCA8-1A9A-4E05-9562-9C5FE3FC470D}
