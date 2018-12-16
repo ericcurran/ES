@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionWorkaround", "src\F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbService", "src\DbService\DbService.csproj", "{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary1", "src\ClassLibrary1\ClassLibrary1.csproj", "{504137CF-0713-481B-A51C-E4E5C248CCE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}.Release|Any CPU.Build.0 = Release|Any CPU
+		{504137CF-0713-481B-A51C-E4E5C248CCE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{504137CF-0713-481B-A51C-E4E5C248CCE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{504137CF-0713-481B-A51C-E4E5C248CCE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{504137CF-0713-481B-A51C-E4E5C248CCE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{CC518A2F-DD2D-46EB-84C8-44DFB59338BE} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
 		{C6DC5227-1FF4-40D6-A8A0-890B1A098697} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
 		{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
+		{504137CF-0713-481B-A51C-E4E5C248CCE4} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7E7DBCA8-1A9A-4E05-9562-9C5FE3FC470D}
