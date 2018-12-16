@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using FtpService;
 using Microsoft.Extensions.Configuration;
 using Willezone.Azure.WebJobs.Extensions.DependencyInjection;
+using DbService;
+using Microsoft.EntityFrameworkCore;
 
 [assembly: WebJobsStartup(typeof(Startup))]
 namespace FtpFunction
@@ -25,7 +27,7 @@ namespace FtpFunction
             services.AddSingleton<IConfiguration>(config);
 
             var connectionString = config.GetConnectionString("RequestManagmentDb");
-            //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
             services.AddTransient<FtpMonitoringService, FtpMonitoringService>((s) =>
             {

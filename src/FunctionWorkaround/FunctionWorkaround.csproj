@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DbService\DbService.csproj" />
     <ProjectReference Include="..\FtpService\FtpService.csproj" />
   </ItemGroup>
 

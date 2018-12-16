@@ -10,6 +10,7 @@
     <PackageReference Include="Willezone.Azure.WebJobs.Extensions.DependencyInjection" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
+     <ProjectReference Include="..\DbService\DbService.csproj" />
      <ProjectReference Include="..\FtpService\FtpService.csproj" />
     <ProjectReference Include="..\FunctionWorkaround\FunctionWorkaround.csproj" />
   </ItemGroup>
