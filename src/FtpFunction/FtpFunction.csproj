@@ -4,13 +4,14 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
     </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="1.7.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.2" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
     <ProjectReference Include="..\DbService\DbService.csproj" />
     <ProjectReference Include="..\FtpService\FtpService.csproj" />
-    <ProjectReference Include="..\FunctionWorkaround\FunctionWorkaround.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\StorageService\StorageService.csproj" />
   </ItemGroup>

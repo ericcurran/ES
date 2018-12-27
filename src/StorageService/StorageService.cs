@@ -7,14 +7,20 @@ using System.Threading.Tasks;
 
 namespace StorageService
 {
-    public class BlobStorageService
+    public static class BlobStorageService
     {
-        private readonly CloudStorageAccount storageAccount;
-        private readonly CloudBlobClient cloudBlobClient;
-        private readonly CloudBlobContainer cloudBlobContainer;
+        private static readonly string blobConnectionString = Environment.GetEnvironmentVariable("BlobStorage");
+        private static readonly string containerName = Environment.GetEnvironmentVariable("BlobContainer");
+        private static CloudStorageAccount storageAccount;
+        private static CloudBlobClient cloudBlobClient;
+        private static CloudBlobContainer cloudBlobContainer;
 
-        public BlobStorageService(string blobConnectionString, string containerName )
+
+
+
+        public static void InitBlobStorageService()
         {
+
           if(!CloudStorageAccount.TryParse(blobConnectionString, out storageAccount))
             {
                 throw new StorageException("A valid Storage account conection string is not provided");
@@ -24,13 +30,13 @@ namespace StorageService
            
         }
 
-        public async Task<bool> IsContainerExist()
+        public static async Task<bool> IsContainerExist()
         {
             return await cloudBlobContainer.ExistsAsync();
         }
 
 
-        public async Task<bool> IsDirectoryExist(string directoryName)
+        public static async Task<bool> IsDirectoryExist(string directoryName)
         {
             var containerItems = await GetContainerItems();
             foreach (var item in containerItems)
@@ -48,7 +54,7 @@ namespace StorageService
             return false;
         }
 
-        public async Task<IReadOnlyCollection<IListBlobItem>> GetContainerItems()
+        public static async Task<IReadOnlyCollection<IListBlobItem>> GetContainerItems()
         {
             BlobContinuationToken blobContinuationToken = null;
             var items = new List<IListBlobItem>();
@@ -62,14 +68,13 @@ namespace StorageService
             return items;
         }
 
-        public async Task SaveFileToBlob(string localFileName, Stream sourceFile)
+        public static async Task SaveFileToBlob(string localFileName, Stream sourceFile)
         {
             CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(localFileName);
             await cloudBlockBlob.UploadFromStreamAsync(sourceFile);
         }
         
-
-        public async Task ProcessAsync()
+        public static async Task ProcessAsync()
         {
             CloudStorageAccount storageAccount = null;
             CloudBlobContainer cloudBlobContainer = null;

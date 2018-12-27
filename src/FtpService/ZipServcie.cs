@@ -7,9 +7,9 @@ using System.Text;
 
 namespace FtpService
 {
-    public class ZipServcie
+    public static class ZipServcie
     {
-        public IEnumerable<ZipArchiveEntry> UnzipFile(Stream stream)
+        public static IEnumerable<ZipArchiveEntry> UnzipFile(Stream stream)
         {
             var zipArchive = new ZipArchive(stream);
 

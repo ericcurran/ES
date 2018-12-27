@@ -21,13 +21,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FtpFunction", "src\FtpFunct
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionWorkaround", "src\FunctionWorkaround\FunctionWorkaround.csproj", "{C6DC5227-1FF4-40D6-A8A0-890B1A098697}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbService", "src\DbService\DbService.csproj", "{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbService", "src\DbService\DbService.csproj", "{F5C2FB8F-C215-495E-8F84-1DFFDCAAC879}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbHelper", "src\DbHelper\DbHelper.csproj", "{29A14979-2BD1-440F-A80C-0F2054B6915E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "src\BusinessLogic\BusinessLogic.csproj", "{432E45D3-DD8F-4DD7-94C1-3AAC0EC3E627}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "src\BusinessLogic\BusinessLogic.csproj", "{432E45D3-DD8F-4DD7-94C1-3AAC0EC3E627}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic.Tests", "tests\BusinessLogic.Tests\BusinessLogic.Tests.csproj", "{7660A88F-F7A7-4935-B482-3067CA6CEABB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic.Tests", "tests\BusinessLogic.Tests\BusinessLogic.Tests.csproj", "{7660A88F-F7A7-4935-B482-3067CA6CEABB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

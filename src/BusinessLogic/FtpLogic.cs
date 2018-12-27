@@ -3,61 +3,46 @@ using FtpService;
 using Models;
 using StorageService;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace BusinessLogic
 {
-    public class FtpLogic
-    {
-        private readonly FtpMonitoringService _ftp;
-        private readonly DataService _db;
-        private readonly ZipServcie _zip;
-        private readonly BlobStorageService _storage;
+    public static class FtpLogic
+    {       
 
-        public FtpLogic(FtpMonitoringService ftp, DataService db,  ZipServcie zip, BlobStorageService storage)
+        public static async Task<IEnumerable<RequestPackage>> GetZipFilesFromFtp()
         {
-            _ftp = ftp;
-            _db = db;
-            _zip = zip;
-            _storage = storage;
+            string[] fileNames = await FtpMonitoringService.GetFileList();
+            var zipFiles       = fileNames.Where(name => name.EndsWith(".zip"));
+            var newZipFIles    = await DataService.SaveNewRequests(zipFiles);
+            return newZipFIles;
         }
 
-        public async Task CheckNewRequests()
+        public static async Task<Stream> DownloadfromFtp(RequestPackage request)
         {
-            string[] fileNames = await _ftp.GetFileList();
-            var zipFiles = fileNames.Where(name => name.EndsWith(".zip"));
-            var requests = await _db.SaveNewRequest(zipFiles);
-
-            foreach (var request in requests)
-            {
-                await UnzipAndStoreRequest(request);
-            }
+            Stream downloadedFile = await FtpMonitoringService.ReadFile(request.ZipFileName);
+            return downloadedFile;
         }
 
-        private async Task UnzipAndStoreRequest(RequestPackage request)
+        public static async Task SaveRecordAndUpdateRequest(RecordFile record)
         {
-            Stream downloadedFile = await _ftp.ReadFile(request.ZipFileName);
-            foreach (var zipEntry in _zip.UnzipFile(downloadedFile))
-            {
-                await _storage.SaveFileToBlob(zipEntry.Name, zipEntry.Open());
-
-                var record = new RecordFile()
-                {
-                    FileName = zipEntry.Name,
-                    Status = RecordStatusEnum.SavedToBlobStorage,
-                    RequestPackageId = request.Id
-                };
-                await _db.SaveNewRecord(record);
-                if (zipEntry.Name.EndsWith(".pdf"))
-                {
-                    request.DeatilsFileName = zipEntry.Name;
-                    request.DetailsRecordId = record.Id;
-                }
-            }
-            await _db.UpdateRequestPackage(request);
-            await _ftp.MoveFileToProcessed(request.ZipFileName);
+           await DataService.SaveNewRecordAndUpdaterequest(record);            
         }
+
+        public static IEnumerable<ZipArchiveEntry> GetZipEntries(Stream downloadedFile)
+        {
+            return ZipServcie.UnzipFile(downloadedFile);
+        }
+
+        public  static async Task CleanFtp(RequestPackage zipFile)
+        {
+            await FtpMonitoringService.MoveFileToProcessed(zipFile.ZipFileName);
+            await DataService.UpdateRequestPackagetoStatus(zipFile.Id, RequestStatusEnum.SavedToBlob);
+        }
+
     }
 }

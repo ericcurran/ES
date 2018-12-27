@@ -5,23 +5,14 @@ using System.Threading.Tasks;
 
 namespace FtpService
 {
-    public class FtpMonitoringService
+    public static class FtpMonitoringService
     {
-        private readonly string _ftpUrl;
-        private readonly string _ftpLogin;
-        private readonly string _ftpPassword;
-        private readonly string _processedDir;
+        private static readonly string _ftpUrl       = Environment.GetEnvironmentVariable("FtpUrl");
+        private static readonly string _ftpLogin     = Environment.GetEnvironmentVariable("FtpLogin");
+        private static readonly string _ftpPassword  = Environment.GetEnvironmentVariable("FtpPasword");
+        private static readonly string _processedDir = Environment.GetEnvironmentVariable("ProcessedDir");
 
-        public FtpMonitoringService(string ftpUrl, string ftpLogin, string ftpPassword, string processedDir)
-        {
-            CheckaArguments(ftpUrl, ftpLogin, ftpPassword);
-            _ftpUrl = ftpUrl;
-            _ftpLogin = ftpLogin;
-            _ftpPassword = ftpPassword;
-            _processedDir = processedDir;
-        }
-
-        public async Task<string[]> GetFileList()
+        public static async Task<string[]> GetFileList()
         {
          
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(_ftpUrl);
@@ -43,7 +34,7 @@ namespace FtpService
             return GetFileList(responseString);
         }
 
-        public async Task<Stream> ReadFile(string fileName)
+        public static async Task<Stream> ReadFile(string fileName)
         {
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create($"{_ftpUrl}/{fileName}");
             request.Method = WebRequestMethods.Ftp.DownloadFile;
@@ -61,7 +52,7 @@ namespace FtpService
             return ms;
         }
 
-        public async Task MoveFileToProcessed(string fileName)
+        public static async Task MoveFileToProcessed(string fileName)
         {
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create($"{_ftpUrl}/{fileName}");
             request.Method = WebRequestMethods.Ftp.Rename;
@@ -71,28 +62,10 @@ namespace FtpService
             response.Close();
         }
 
-        private string[] GetFileList(string responseString)
+        private static string[] GetFileList(string responseString)
         {
             string[] lines = responseString.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             return lines;
-        }
-
-        private void CheckaArguments(string ftpUrl, string ftpLogin, string ftpPassword)
-        {
-            if (string.IsNullOrEmpty(ftpUrl))
-            {
-                throw new ArgumentException("Argument is null or empty", nameof(ftpUrl));
-            }
-
-            if (string.IsNullOrEmpty(ftpLogin))
-            {
-                throw new ArgumentException("Argument is null or empty", nameof(ftpLogin));
-            }
-
-            if (string.IsNullOrEmpty(ftpPassword))
-            {
-                throw new ArgumentException("Argument is null or empty", nameof(ftpPassword));
-            }
-        }
+        }     
     }
 }

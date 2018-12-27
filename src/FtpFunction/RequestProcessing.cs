@@ -1,23 +1,22 @@
 using System;
 using System.Threading.Tasks;
 using BusinessLogic;
+using FtpService;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Willezone.Azure.WebJobs.Extensions.DependencyInjection;
 
 namespace FtpFunction
 {
     public static class RequestProcessing
     {
-        [FunctionName("FtpProcessing")]
-        public static async Task Run([TimerTrigger("*/5 * * * * *")]TimerInfo myTimer,
-                                                                      ILogger log,
-                                                            [Inject] FtpLogic service)
+        //[FunctionName("FtpProcessing")]
+        public static async Task Run([TimerTrigger("* */5 * * * *")]TimerInfo myTimer,
+                                                                      ILogger log)
         {
             log.LogInformation($"Service started at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}.");
-            await service.CheckNewRequests();
+            await FtpLogic.GetZipFilesFromFtp();
             log.LogInformation($"Service finished at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}.");
 
         }
