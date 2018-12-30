@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.Storage;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace StorageService
 {
-    public static class BlobStorageService
+    public class BlobStorageService
     {
         private static readonly string blobConnectionString = Environment.GetEnvironmentVariable("BlobStorage");
         private static readonly string containerName = Environment.GetEnvironmentVariable("BlobContainer");
@@ -15,7 +16,10 @@ namespace StorageService
         private static CloudBlobClient cloudBlobClient;
         private static CloudBlobContainer cloudBlobContainer;
 
+        public BlobStorageService(string storageConnectionString, string blobContainer, ILogger<BlobStorageService> log)
+        {
 
+        }
 
 
         public static void InitBlobStorageService()

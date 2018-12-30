@@ -1,18 +1,30 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace FtpService
 {
-    public static class FtpMonitoringService
+    public class FtpClient
     {
-        private static readonly string _ftpUrl       = Environment.GetEnvironmentVariable("FtpUrl");
-        private static readonly string _ftpLogin     = Environment.GetEnvironmentVariable("FtpLogin");
-        private static readonly string _ftpPassword  = Environment.GetEnvironmentVariable("FtpPasword");
-        private static readonly string _processedDir = Environment.GetEnvironmentVariable("ProcessedDir");
+        private readonly string _ftpUrl;
+        private readonly string _ftpLogin;
+        private readonly string _ftpPassword;
+        private readonly string _processedDir;
+        private readonly ILogger<FtpClient> _logger;
 
-        public static async Task<string[]> GetFileList()
+        public FtpClient(string ftpUrl, string ftpLogin, string ftpPassword, string processedDir, ILogger<FtpClient> logger)
+        {
+            _ftpUrl = ftpUrl;
+            _ftpLogin = ftpLogin;
+            _ftpPassword = ftpPassword;
+            _processedDir = processedDir;
+            _logger = logger;
+        }
+       
+
+        public async Task<string[]> GetFileList()
         {
          
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(_ftpUrl);
@@ -34,8 +46,9 @@ namespace FtpService
             return GetFileList(responseString);
         }
 
-        public static async Task<Stream> ReadFile(string fileName)
+        public async Task<Stream> ReadFile(string fileName)
         {
+            _logger.LogInformation($"File {fileName} downloading started.");
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create($"{_ftpUrl}/{fileName}");
             request.Method = WebRequestMethods.Ftp.DownloadFile;
 
@@ -48,11 +61,11 @@ namespace FtpService
             await responseStream.CopyToAsync(ms);
 
             response.Close();
-
+            _logger.LogInformation($"File {fileName} downloading finished successfully.");
             return ms;
         }
 
-        public static async Task MoveFileToProcessed(string fileName)
+        public async Task MoveFileToProcessed(string fileName)
         {
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create($"{_ftpUrl}/{fileName}");
             request.Method = WebRequestMethods.Ftp.Rename;
@@ -62,7 +75,7 @@ namespace FtpService
             response.Close();
         }
 
-        private static string[] GetFileList(string responseString)
+        private string[] GetFileList(string responseString)
         {
             string[] lines = responseString.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             return lines;

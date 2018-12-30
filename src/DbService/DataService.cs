@@ -8,11 +8,14 @@ using System.Threading.Tasks;
 
 namespace DbService
 {
-    public static class DataService
+    public class DataService
     {
-        private static readonly string _connectionString =  Environment.GetEnvironmentVariable("ConnectionStrings:RequestManagmentDb");
+        private readonly string _connectionString;
 
-        public static async Task<IEnumerable<RequestPackage>> SaveNewRequests(IEnumerable<string> fileNames)
+        public DataService(string connectionString) => _connectionString = connectionString;
+
+
+        public async Task<IEnumerable<RequestPackage>> SaveNewRequests(IEnumerable<string> fileNames)
         {
             var requests = fileNames.Select(fileName => new RequestPackage()
             {
@@ -32,7 +35,7 @@ namespace DbService
             return requests;
         }
 
-        public static async Task SaveNewRecordAndUpdaterequest(RecordFile record)
+        public async Task SaveNewRecordAndUpdaterequest(RecordFile record)
         {
             using (var db = GetDbContext())
             {
@@ -48,7 +51,7 @@ namespace DbService
             }
         }
 
-        public static async Task UpdateRequestPackagetoStatus(int requestId, RequestStatusEnum status)
+        public async Task UpdateRequestPackagetoStatus(int requestId, RequestStatusEnum status)
         {
             using (var db = GetDbContext())
             {
@@ -61,7 +64,7 @@ namespace DbService
             }
         }
 
-        private static ApplicationDbContext GetDbContext()
+        private ApplicationDbContext GetDbContext()
         {
             var opt = new DbContextOptionsBuilder<ApplicationDbContext>()
                          .UseSqlServer(_connectionString)

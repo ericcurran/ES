@@ -11,15 +11,15 @@ namespace FtpFunction
 {
     public static class RequestProcessing
     {
-        //[FunctionName("FtpProcessing")]
-        public static async Task Run([TimerTrigger("* */5 * * * *")]TimerInfo myTimer,
-                                                                      ILogger log)
-        {
-            log.LogInformation($"Service started at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}.");
-            await FtpLogic.GetZipFilesFromFtp();
-            log.LogInformation($"Service finished at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}.");
+        ////[FunctionName("FtpProcessing")]
+        //public static async Task Run([TimerTrigger("* */5 * * * *")]TimerInfo myTimer,
+        //                                                              ILogger log)
+        //{
+        //    log.LogInformation($"Service started at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}.");
+        //    //await FtpLogic.GetZipFilesFromFtp();
+        //    log.LogInformation($"Service finished at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}.");
 
-        }
+        //}
 
         //[FunctionName("HttpFunction")]
         //public static async Task<IActionResult> Run(
