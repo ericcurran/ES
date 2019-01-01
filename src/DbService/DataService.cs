@@ -35,18 +35,21 @@ namespace DbService
             return requests;
         }
 
-        public async Task SaveNewRecordAndUpdaterequest(RecordFile record)
+        public async Task SaveNewRecordAndUpdaterequest(IEnumerable<RecordFile> records)
         {
             using (var db = GetDbContext())
             {
-                db.RecordFiles.Add(record);
+                db.RecordFiles.AddRange(records);
                 await db.SaveChangesAsync();
-                if (record.FileName.EndsWith(".pdf"))
+                foreach (var record in records)
                 {
-                    var request = await db.RequestPackages.FindAsync(record.RequestPackageId);
-                    request.DeatilsFileName = record.FileName;
-                    request.DetailsRecordId = record.RequestPackageId;
-                    await db.SaveChangesAsync();
+                    if (record.FileName.EndsWith(".pdf"))
+                    {
+                        var request = await db.RequestPackages.FindAsync(record.RequestPackageId);
+                        request.DeatilsFileName = record.FileName;
+                        request.DetailsRecordId = record.RequestPackageId;
+                        await db.SaveChangesAsync();
+                    }
                 }
             }
         }

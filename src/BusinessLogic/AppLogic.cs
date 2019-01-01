@@ -15,12 +15,14 @@ namespace BusinessLogic
     public class AppLogic
     {
         private readonly DataService _db;
+        private readonly BlobStorageService _bs;
         private readonly FtpClient _ftpClient;
         private readonly ILogger<AppLogic> _log;
 
         public AppLogic(DataService db, BlobStorageService bs, FtpClient ftpClient, ILogger<AppLogic> log)
         {
             _db = db;
+            _bs = bs;
             _ftpClient = ftpClient;
             _log = log;
         }
@@ -37,24 +39,52 @@ namespace BusinessLogic
                 
                 var downloadedFile = await DownloadfromFtp(zip);
 
-                var zipEntires = GetZipEntries(downloadedFile);
+                var zipEntires = await GetZipEntries(downloadedFile);
 
-                foreach (var record in zipEntires)
-                {
-                    //recordToSave = zipRecord.Open();
-                    // log.LogInformation($"file {zipRecord.Name} started to save in blob");
-                    await SaveRecordAndUpdateRequest(new RecordFile()
-                    {
-                        FileName = record.Name,
-                        RequestPackageId = zip.Id,
-                        Status = RecordStatusEnum.SavedToBlobStorage
-                    });
-                }
+                
+                var savedRecords = await SaveToBlob(zipEntires, zip.Id);
+                await SaveRecordAndUpdateRequest(savedRecords);
+
                 await CleanFtp(zip);
                 _log.LogInformation($"Finished processing file {zip.ZipFileName}");
             }
 
                 _log.LogInformation($"Job ended!");
+        }
+
+        private async Task<List<RecordFile>> SaveToBlob(IEnumerable<ZipEntryModel> records, int zipId)
+        {
+
+            var savedRecords = new List<RecordFile>();
+            var savedTasks = new List<Task<RecordFile>>();
+            Task whenAllTask = null;
+            foreach (var record in records)
+            {
+                var task = _bs.SaveFileToBlob(record.FileName, record.FileStrem);
+                savedTasks.Add(task);
+                if (savedTasks.Count == 50)
+                {
+                    whenAllTask = Task.WhenAll(savedTasks);
+                    await whenAllTask;
+                    savedTasks.ForEach(t =>
+                    {
+                        t.Result.RequestPackageId = zipId;
+                        savedRecords.Add(t.Result);
+                    });
+                    savedTasks.Clear();
+                }
+            }
+            if (savedTasks.Count > 0)
+            {
+                await Task.WhenAll(savedTasks);
+                savedTasks.ForEach(t =>
+                {
+                    t.Result.RequestPackageId = zipId;
+                    savedRecords.Add(t.Result);
+                });
+            }
+
+            return savedRecords;
         }
 
         public async Task<List<RequestPackage>> GetZipFilesFromFtp()
@@ -71,14 +101,14 @@ namespace BusinessLogic
             return downloadedFile;
         }
 
-        public async Task SaveRecordAndUpdateRequest(RecordFile record)
+        public async Task SaveRecordAndUpdateRequest(IEnumerable<RecordFile> records)
         {
-           await _db.SaveNewRecordAndUpdaterequest(record);            
+           await _db.SaveNewRecordAndUpdaterequest(records);            
         }
 
-        public static IEnumerable<ZipArchiveEntry> GetZipEntries(Stream downloadedFile)
+        public static async Task<IEnumerable<ZipEntryModel>> GetZipEntries(Stream downloadedFile)
         {
-            return ZipServcie.UnzipFile(downloadedFile);
+            return await ZipServcie.UnzipFile(downloadedFile);
         }
 
         public  async Task CleanFtp(RequestPackage zipFile)

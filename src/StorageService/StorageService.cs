@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,28 +11,24 @@ namespace StorageService
 {
     public class BlobStorageService
     {
-        private static readonly string blobConnectionString = Environment.GetEnvironmentVariable("BlobStorage");
-        private static readonly string containerName = Environment.GetEnvironmentVariable("BlobContainer");
+        private static readonly string storageConnectionString;
+        private static readonly string blobContainer;
+        private readonly ILogger<BlobStorageService> _log;
         private static CloudStorageAccount storageAccount;
         private static CloudBlobClient cloudBlobClient;
         private static CloudBlobContainer cloudBlobContainer;
 
         public BlobStorageService(string storageConnectionString, string blobContainer, ILogger<BlobStorageService> log)
         {
-
-        }
-
-
-        public static void InitBlobStorageService()
-        {
-
-          if(!CloudStorageAccount.TryParse(blobConnectionString, out storageAccount))
+            _log = log;
+            if (!CloudStorageAccount.TryParse(storageConnectionString, out storageAccount))
             {
+                _log.LogError("A valid Storage account conection string is not provided");
                 throw new StorageException("A valid Storage account conection string is not provided");
             }
             cloudBlobClient = storageAccount.CreateCloudBlobClient();
-            cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
-           
+            cloudBlobContainer = cloudBlobClient.GetContainerReference(blobContainer);
+            
         }
 
         public static async Task<bool> IsContainerExist()
@@ -72,10 +69,22 @@ namespace StorageService
             return items;
         }
 
-        public static async Task SaveFileToBlob(string localFileName, Stream sourceFile)
+        public async Task<RecordFile> SaveFileToBlob(string localFileName, Stream sourceFile)
         {
             CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(localFileName);
-            await cloudBlockBlob.UploadFromStreamAsync(sourceFile);
+            _log.LogInformation($"file {localFileName} started to save in blob");
+            var context = new OperationContext();
+            context.RequestCompleted += (sender, arg) => {
+                _log.LogInformation(arg.RequestInformation.HttpStatusMessage);
+            };
+            await cloudBlockBlob.UploadFromStreamAsync(sourceFile,null,null,context);
+           
+            _log.LogInformation($"file {localFileName} ended to save in blob");
+            return new RecordFile()
+            {
+                FileName = localFileName,
+                Status = RecordStatusEnum.SavedToBlobStorage
+            };
         }
         
         public static async Task ProcessAsync()

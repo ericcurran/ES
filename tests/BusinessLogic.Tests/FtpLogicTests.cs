@@ -7,11 +7,21 @@ using StorageService;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace BusinessLogic.Tests
 {
     public class FtpLogicTests
     {
+        private readonly LoggerFactory _loggerFactory;
+
+        public FtpLogicTests(ITestOutputHelper testOutputHelper)
+        {
+            var loggerFactory = new LoggerFactory();
+            loggerFactory.AddProvider(new XunitLoggerProvider(testOutputHelper));
+            _loggerFactory = loggerFactory;
+        }
+
         [Fact]
         public async Task SaveNewFilesTest()
         {
@@ -46,13 +56,8 @@ namespace BusinessLogic.Tests
 
         private ILogger<T> GetLogger<T>()
         {
-            var serviceProvider = new ServiceCollection()
-                 .AddLogging()
-                 .BuildServiceProvider();
 
-            var factory = serviceProvider.GetService<ILoggerFactory>();
-
-            var logger = factory.CreateLogger<T>();
+            var logger = _loggerFactory.CreateLogger<T>();
             return logger;
         }
     }
