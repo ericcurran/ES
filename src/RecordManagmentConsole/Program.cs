@@ -54,19 +54,23 @@ namespace RecordManagmentConsole
             string ftpPassword = config["FtpPasword"];
             string processedDir = config["ProcessedDir"];
 
-            services.AddTransient((s) => new DataService(connectionString));
-            services.AddTransient(s =>
+            services.AddTransient((s) =>
+            {
+                var logger = s.GetService<ILogger<DataService>>();
+                return new DataService(connectionString, logger);
+            })
+            .AddTransient(s =>
             {
                 var logger = s.GetService<ILogger<BlobStorageService>>();
                 return new BlobStorageService(storageConnectionString, blobContainer, logger);
-            });
-            services.AddTransient(s =>
+            })
+            .AddTransient(s =>
             {
                 var logger = s.GetService<ILogger<FtpClient>>();
                 return new FtpClient(ftpUrl, ftpLogin, ftpPassword, processedDir, logger);
-            });
-            services.AddTransient<AppLogic>();
-            services.AddHostedService<HostedAppService>();
+            })
+            .AddTransient<AppLogic>()
+            .AddHostedService<HostedAppService>();
         }
 
 

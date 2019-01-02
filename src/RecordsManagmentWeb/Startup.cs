@@ -43,7 +43,11 @@ namespace RecordsManagmentWeb
             string ftpPassword  = Configuration["FtpPasword"];
             string processedDir = Configuration["ProcessedDir"];
 
-            services.AddTransient((s)=> new DataService(connectionString));
+            services.AddTransient((s) =>
+            {
+                var logger = s.GetService<ILogger<DataService>>();
+                return new DataService(connectionString, logger);
+            });
             services.AddTransient(s =>
             {
                 var logger = s.GetService<ILogger<BlobStorageService>>();
@@ -75,7 +79,7 @@ namespace RecordsManagmentWeb
         private void RunJob(IApplicationBuilder app, IHostingEnvironment env)
         {
             var appJob = app.ApplicationServices.GetService<AppLogic>();
-            RecurringJob.AddOrUpdate(() => appJob.Run(), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => appJob.Run(), Cron.Hourly);
                         
         }
 

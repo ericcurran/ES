@@ -71,19 +71,28 @@ namespace StorageService
 
         public async Task<RecordFile> SaveFileToBlob(string localFileName, Stream sourceFile)
         {
+
             CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(localFileName);
             _log.LogInformation($"file {localFileName} started to save in blob");
             var context = new OperationContext();
+            var status = RecordStatusEnum.SavedToBlobStorage;
             context.RequestCompleted += (sender, arg) => {
                 _log.LogInformation(arg.RequestInformation.HttpStatusMessage);
+                if (!string.IsNullOrEmpty(arg.RequestInformation.ErrorCode))
+                {
+                    _log.LogError(arg.RequestInformation.ErrorCode);
+                    _log.LogError(arg.RequestInformation.Exception.Message);
+                    status = RecordStatusEnum.NotSavedToBlob;
+                }
             };
+            
             await cloudBlockBlob.UploadFromStreamAsync(sourceFile,null,null,context);
            
             _log.LogInformation($"file {localFileName} ended to save in blob");
             return new RecordFile()
             {
                 FileName = localFileName,
-                Status = RecordStatusEnum.SavedToBlobStorage
+                Status = status
             };
         }
         

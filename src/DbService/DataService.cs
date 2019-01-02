@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -11,46 +12,68 @@ namespace DbService
     public class DataService
     {
         private readonly string _connectionString;
+        private readonly ILogger<DataService> _log;
 
-        public DataService(string connectionString) => _connectionString = connectionString;
-
+        public DataService(string connectionString, ILogger<DataService> logger)
+        {
+            _connectionString = connectionString;
+            _log = logger;
+        }
 
         public async Task<IEnumerable<RequestPackage>> SaveNewRequests(IEnumerable<string> fileNames)
         {
-            var requests = fileNames.Select(fileName => new RequestPackage()
+            try
             {
-                ZipFileName = fileName,
-                Status = RequestStatusEnum.New
-            }).ToList();
-
-            using (var db = GetDbContext())
-            {
-                foreach (var r in requests)
+                var requests = fileNames.Select(fileName => new RequestPackage()
                 {
-                    var e = db.RequestPackages.Add(r);
-                    await db.SaveChangesAsync();                    
-                }
-            }
+                    ZipFileName = fileName,
+                    Status = RequestStatusEnum.New
+                }).ToList();
 
-            return requests;
+                using (var db = GetDbContext())
+                {
+                    foreach (var r in requests)
+                    {
+                        var e = db.RequestPackages.Add(r);
+                        await db.SaveChangesAsync();
+                    }
+                }
+
+                return requests;
+            }
+            catch (Exception e)
+            {
+                _log.LogError("Error during saving new zip file list.");
+                _log.LogError(e.Message);
+                throw e;
+            }
         }
 
         public async Task SaveNewRecordAndUpdaterequest(IEnumerable<RecordFile> records)
         {
-            using (var db = GetDbContext())
+            try
             {
-                db.RecordFiles.AddRange(records);
-                await db.SaveChangesAsync();
-                foreach (var record in records)
+                using (var db = GetDbContext())
                 {
-                    if (record.FileName.EndsWith(".pdf"))
+                    db.RecordFiles.AddRange(records);
+                    await db.SaveChangesAsync();
+                    foreach (var record in records)
                     {
-                        var request = await db.RequestPackages.FindAsync(record.RequestPackageId);
-                        request.DeatilsFileName = record.FileName;
-                        request.DetailsRecordId = record.RequestPackageId;
-                        await db.SaveChangesAsync();
+                        if (record.FileName.EndsWith(".pdf"))
+                        {
+                            var request = await db.RequestPackages.FindAsync(record.RequestPackageId);
+                            request.DeatilsFileName = record.FileName;
+                            request.DetailsRecordId = record.RequestPackageId;
+                            await db.SaveChangesAsync();
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                _log.LogError("Error during saving record files.");
+                _log.LogError(e.Message);
+                throw e;
             }
         }
 

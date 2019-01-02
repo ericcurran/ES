@@ -31,17 +31,20 @@ namespace BusinessLogic
         {
             _log.LogInformation($"Job started!");
 
-            var newZipFileName = await GetZipFilesFromFtp();
+            var newZipFileName = await GetZipFileList();
             
             foreach (var zip in newZipFileName)
             {
                 _log.LogInformation($"Start processing file {zip.ZipFileName}");
                 
                 var downloadedFile = await DownloadfromFtp(zip);
+                if (downloadedFile == null)
+                {
+                    continue;
+                }
 
                 var zipEntires = await GetZipEntries(downloadedFile);
-
-                
+                                
                 var savedRecords = await SaveToBlob(zipEntires, zip.Id);
                 await SaveRecordAndUpdateRequest(savedRecords);
 
@@ -87,11 +90,13 @@ namespace BusinessLogic
             return savedRecords;
         }
 
-        public async Task<List<RequestPackage>> GetZipFilesFromFtp()
+        public async Task<List<RequestPackage>> GetZipFileList()
         {
             string[] fileNames = await _ftpClient.GetFileList();
             var zipFiles       = fileNames.Where(name => name.EndsWith(".zip"));
+            _log.LogInformation($"Found {zipFiles.Count()} zip files");
             var newZipFIles    = await _db.SaveNewRequests(zipFiles);
+            _log.LogInformation($"Info about {newZipFIles.Count()} zip files saved to database");
             return newZipFIles.ToList();
         }
 

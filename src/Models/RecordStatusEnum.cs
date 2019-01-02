@@ -2,6 +2,7 @@
 {
     public enum RecordStatusEnum
     {
-        SavedToBlobStorage = 1
+        SavedToBlobStorage = 1,
+        NotSavedToBlob = 2
     }
 }

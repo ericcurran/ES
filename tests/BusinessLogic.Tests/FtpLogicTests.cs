@@ -25,7 +25,8 @@ namespace BusinessLogic.Tests
         [Fact]
         public async Task SaveNewFilesTest()
         {
-            var ds = new DataService("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RequestManagmentDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            var dsLog = GetLogger<DataService>();
+            var ds = new DataService("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RequestManagmentDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False", dsLog);
             var ftpService = GetFtpClient();
             var log = GetLogger<AppLogic>();
 
