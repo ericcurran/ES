@@ -62,6 +62,7 @@ namespace RecordsManagmentWeb
 
             //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("RequestManagmentDb")));
+            ConfugureBasicMvc(services);
         }
 
     
@@ -69,8 +70,12 @@ namespace RecordsManagmentWeb
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            UseBasicMvc(app, env);
             app.UseHangfireServer();
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+            {
+                Authorization = new[] { new HangfireAuthorization() },
+            });
             RunJob(app, env);
 
             
