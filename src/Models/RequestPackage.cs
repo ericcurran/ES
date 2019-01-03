@@ -8,6 +8,7 @@ namespace Models
         public string ZipFileName { get; set; }
         public string DeatilsFileName { get; set; }
         public int? DetailsRecordId { get; set; }
+        public int? EsRef { get; set; }
         public RequestStatusEnum Status { get; set; }
 
     }

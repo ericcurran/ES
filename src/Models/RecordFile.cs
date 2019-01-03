@@ -10,6 +10,7 @@ namespace Models
         public string FileName { get; set; }
         public RecordStatusEnum Status { get; set; }
         public int RequestPackageId { get; set; }
+        public int? EsRef { get; set; }
 
         public virtual RequestPackage RequestPackage { get; set; }
     }
