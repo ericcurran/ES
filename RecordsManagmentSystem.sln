@@ -29,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic.Tests", "test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecordsManagmentWeb", "src\RecordsManagmentWeb\RecordsManagmentWeb.csproj", "{80F895AB-317A-4BC4-871F-39C4AFD2595D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecordManagmentConsole", "src\RecordManagmentConsole\RecordManagmentConsole.csproj", "{180EC890-6A8A-4315-8458-C00A71357458}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecordManagmentConsole", "src\RecordManagmentConsole\RecordManagmentConsole.csproj", "{180EC890-6A8A-4315-8458-C00A71357458}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngularWeb", "src\AngularWeb\AngularWeb.csproj", "{0A122007-FAD8-41E4-9597-9EF7F87C8119}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,6 +87,10 @@ Global
 		{180EC890-6A8A-4315-8458-C00A71357458}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{180EC890-6A8A-4315-8458-C00A71357458}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{180EC890-6A8A-4315-8458-C00A71357458}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A122007-FAD8-41E4-9597-9EF7F87C8119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A122007-FAD8-41E4-9597-9EF7F87C8119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A122007-FAD8-41E4-9597-9EF7F87C8119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A122007-FAD8-41E4-9597-9EF7F87C8119}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +108,7 @@ Global
 		{7660A88F-F7A7-4935-B482-3067CA6CEABB} = {B531CE0F-2B92-4C16-87B4-DE9E449E4EBC}
 		{80F895AB-317A-4BC4-871F-39C4AFD2595D} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
 		{180EC890-6A8A-4315-8458-C00A71357458} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
+		{0A122007-FAD8-41E4-9597-9EF7F87C8119} = {2A3D51DD-C1C6-4F0D-AD68-1FA0D30B519B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7E7DBCA8-1A9A-4E05-9562-9C5FE3FC470D}
