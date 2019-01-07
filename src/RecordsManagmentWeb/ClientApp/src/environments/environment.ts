@@ -3,7 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  azureAdTenantId: '1ad5568a-c025-4749-b1d4-868d82da39eb',
+
+  azureAdClientId: 'cee2d7b1-2c63-4343-8272-d72c22e40caa',
+  webApiEndpoint: 'https://localhost:5001/api/',
 };
 
 /*

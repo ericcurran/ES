@@ -23,9 +23,32 @@ namespace RecordsManagmentWeb.Controllers
 
         // GET: api/Record
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RecordFile>>> GetRecordFiles()
+        public async Task<ActionResult> GetRecordFiles(int requestId, 
+            string sortDir, int page, int size)
         {
-            return await _context.RecordFiles.ToListAsync();
+            var data = _context.RecordFiles.AsNoTracking();
+            if (requestId > 0)
+            {
+                data = data.Where(r => r.RequestPackageId == requestId);
+            }
+            int count = await data.CountAsync();
+            switch (sortDir)
+            {
+                case "asc":
+                    data = data.OrderBy(r => r.FileName);
+                    break;
+                case "desc":
+                    data = data.OrderByDescending(r => r.FileName);
+                    break;
+                default:
+                    break;
+            }
+
+            return Ok(new
+            {
+                Data = await data.Skip(page * size).Take(size).ToListAsync(),
+                Count = count
+            });
         }
 
         // GET: api/Record/5

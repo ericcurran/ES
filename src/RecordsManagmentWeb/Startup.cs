@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BusinessLogic;
@@ -43,6 +44,8 @@ namespace RecordsManagmentWeb
             string ftpLogin     = Configuration["FtpLogin"];
             string ftpPassword  = Configuration["FtpPasword"];
             string processedDir = Configuration["ProcessedDir"];
+
+            services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(connectionString));
 
             services.AddTransient((s) =>
             {
@@ -90,7 +93,7 @@ namespace RecordsManagmentWeb
         private void RunJob(IApplicationBuilder app, IHostingEnvironment env)
         {
             var appJob = app.ApplicationServices.GetService<AppLogic>();
-            RecurringJob.AddOrUpdate(() => appJob.Run(), Cron.Hourly);
+            RecurringJob.AddOrUpdate(() => appJob.Run(), Cron.MinuteInterval(10));
                         
         }
 
@@ -104,35 +107,43 @@ namespace RecordsManagmentWeb
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                //app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
-            app.UseCookiePolicy();                        
+            //app.UseHttpsRedirection();
+            app.UseFileServer();
+            app.UseCookiePolicy();
 
-            app.UseAuthentication();
+            //app.UseAuthentication();
 
-            app.UseMvc(routes =>
+            app
+            .UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
-            });
 
-            app.UseSpa(spa =>
+            });
+            app.Run(async (context) =>
             {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
-
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
+                context.Response.ContentType = "text/html";
+                await context.Response.SendFileAsync(Path.Combine(env.WebRootPath, "index.html"));
             });
+
+
+           // app.UseSpa(
+           //     spa =>
+           // {
+           //     // To learn more about options for serving an Angular SPA from ASP.NET Core,
+           //     // see https://go.microsoft.com/fwlink/?linkid=864501
+
+           //       //spa.Options.SourcePath = "ClientApp";
+
+           // //    if (env.IsDevelopment())
+           // //    {
+           // //        spa.UseAngularCliServer(npmScript: "start");
+           // //    }
+           //});
         }
 
         private void ConfugureBasicMvc(IServiceCollection services)
@@ -152,7 +163,7 @@ namespace RecordsManagmentWeb
                 var policy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
+                //options.Filters.Add(new AuthorizeFilter(policy));
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

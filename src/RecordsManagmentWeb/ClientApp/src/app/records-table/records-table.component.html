@@ -7,9 +7,21 @@
     </ng-container>
 
     <!-- Name Column -->
-    <ng-container matColumnDef="name">
+    <ng-container matColumnDef="fileName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-      <td mat-cell *matCellDef="let row">{{row.name}}</td>
+      <td mat-cell *matCellDef="let row">
+          <a href="" (click)="onDetailsLinkCLick(row.fileName)">{{row.fileName}}</a>        
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let row">{{row.status}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="esRef">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Ref Number</th>
+      <td mat-cell *matCellDef="let row">{{row.esRef}}</td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -17,9 +29,9 @@
   </table>
 
   <mat-paginator #paginator
-      [length]="dataSource.data.length"
+      [length]="0"
       [pageIndex]="0"
-      [pageSize]="50"
+      [pageSize]="25"
       [pageSizeOptions]="[25, 50, 100, 250]">
   </mat-paginator>
 </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { RequestsTableDataSource } from './requests-table-datasource';
-import { RequestsService } from './requests-table.service';
+import { AppHttpService } from '../app-http.service';
 
 @Component({
   selector: 'app-requests-table',
@@ -14,13 +14,16 @@ export class RequestsTableComponent implements OnInit {
   dataSource: RequestsTableDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'name'];
+  displayedColumns = ['id', 'deatilsFileName', 'zipFileName', 'status', 'esRef', 'requestPack'];
 
-  constructor(private http:RequestsService) {    
-
+  constructor(private http: AppHttpService) {
   }
 
   ngOnInit() {
     this.dataSource = new RequestsTableDataSource(this.paginator, this.sort, this.http);
+  }
+
+  onDetailsLinkCLick(deatilsFileName: string) {
+    window.open(`https://casedocuments.blob.core.windows.net/documents-test/${deatilsFileName}`, '_blank');
   }
 }
