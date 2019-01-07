@@ -5,6 +5,7 @@
     <UserSecretsId>aspnet-RecordsManagmentWeb-F4869CF7-5A21-4993-B85E-2573BD884A1B</UserSecretsId>
     <WebProject_DirectoryAccessLevelKey>0</WebProject_DirectoryAccessLevelKey>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
 
 

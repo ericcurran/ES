@@ -1,18 +1,16 @@
-import { DataSource, CollectionViewer } from '@angular/cdk/collections';
+import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort } from '@angular/material';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
-import { RequestsService } from './requests-table.service';
-import { RequestDoc } from './request';
 
 // TODO: Replace this with your own data model type
-export interface RequestsTableItem {
+export interface RecordsTableItem {
   name: string;
   id: number;
 }
 
 // TODO: replace this with real data from your application
-const EXAMPLE_DATA: RequestsTableItem[] = [
+const EXAMPLE_DATA: RecordsTableItem[] = [
   {id: 1, name: 'Hydrogen'},
   {id: 2, name: 'Helium'},
   {id: 3, name: 'Lithium'},
@@ -36,14 +34,14 @@ const EXAMPLE_DATA: RequestsTableItem[] = [
 ];
 
 /**
- * Data source for the RequestsTable view. This class should
+ * Data source for the RecordsTable view. This class should
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class RequestsTableDataSource extends DataSource<RequestDoc> {
-  data: RequestDoc[] = [];
+export class RecordsTableDataSource extends DataSource<RecordsTableItem> {
+  data: RecordsTableItem[] = EXAMPLE_DATA;
 
-  constructor(private paginator: MatPaginator, private sort: MatSort, private http: RequestsService) {
+  constructor(private paginator: MatPaginator, private sort: MatSort) {
     super();
   }
 
@@ -52,7 +50,7 @@ export class RequestsTableDataSource extends DataSource<RequestDoc> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(collectionViewer: CollectionViewer): Observable<RequestDoc[]> {
+  connect(): Observable<RecordsTableItem[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -64,9 +62,8 @@ export class RequestsTableDataSource extends DataSource<RequestDoc> {
     // Set the paginator's length
     this.paginator.length = this.data.length;
 
-    return merge(...dataMutations)
-      .pipe(map(() => {
-              return this.getPagedData(this.getSortedData([...this.data]));
+    return merge(...dataMutations).pipe(map(() => {
+      return this.getPagedData(this.getSortedData([...this.data]));
     }));
   }
 
@@ -80,7 +77,7 @@ export class RequestsTableDataSource extends DataSource<RequestDoc> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: RequestDoc[]) {
+  private getPagedData(data: RecordsTableItem[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -89,7 +86,7 @@ export class RequestsTableDataSource extends DataSource<RequestDoc> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: RequestDoc[]) {
+  private getSortedData(data: RecordsTableItem[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -97,7 +94,7 @@ export class RequestsTableDataSource extends DataSource<RequestDoc> {
     return data.sort((a, b) => {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
-        case 'name': return compare(a.deatilsFileName, b.deatilsFileName, isAsc);
+        case 'name': return compare(a.name, b.name, isAsc);
         case 'id': return compare(+a.id, +b.id, isAsc);
         default: return 0;
       }
