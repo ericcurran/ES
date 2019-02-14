@@ -14,7 +14,7 @@ export class RequestsTableComponent implements OnInit {
   dataSource: RequestsTableDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'deatilsFileName', 'zipFileName', 'status', 'esRef', 'requestPack'];
+  displayedColumns = ['id', 'deatilsFileName', 'zipFileName', 'status', 'esRef', 'requestPack', 'pdfPackName'];
 
   constructor(private http: AppHttpService) {
   }
@@ -25,5 +25,16 @@ export class RequestsTableComponent implements OnInit {
 
   onDetailsLinkCLick(deatilsFileName: string) {
     window.open(`https://casedocuments.blob.core.windows.net/documents-test/${deatilsFileName}`, '_blank');
+  }
+
+  onGenerateClick(id: number) {
+    this.http.generateReport(id)
+      .subscribe(() => {
+        window.open(`https://casedocuments.blob.core.windows.net/documents-test/input.pdf`, '_blank');
+      });
+  }
+
+  onGetPdfPack(fileName: string) {
+    window.open(`https://casedocuments.blob.core.windows.net/documents-test/${fileName}`, '_blank');
   }
 }

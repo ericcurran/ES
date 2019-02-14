@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using Models;
-using System;
-using System.IO;
 
 namespace DbService
 {
@@ -15,12 +12,18 @@ namespace DbService
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-             
+            modelBuilder.Entity<PdfPack>()
+               .HasOne(p => p.RequestPackage)
+               .WithOne(p => p.PdfPack)
+               .HasForeignKey<PdfPack>(p=>p.Id);
+                
         }
 
         public DbSet<RequestPackage> RequestPackages { get; set; }
 
         public DbSet<RecordFile> RecordFiles { get; set; }
+
+        public DbSet<PdfPack> PdfPacks { get; set; }
     }
 
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>

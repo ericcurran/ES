@@ -4,7 +4,7 @@ import { SortDirection } from '@angular/material';
 
 @Injectable()
 export class AppHttpService {
-  
+
     constructor(private http: HttpClient) {
     }
 
@@ -20,6 +20,10 @@ export class AppHttpService {
         .set('page', page.toString())
         .set('size', size.toString());
         return this.http.get('/api/record', { params });
+    }
+
+    generateReport(id: number) {
+        return this.http.post(`/api/pack/${id}`, undefined);
     }
 }
 

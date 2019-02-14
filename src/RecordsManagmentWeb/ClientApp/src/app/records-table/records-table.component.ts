@@ -11,18 +11,16 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./records-table.component.scss']
 })
 export class RecordsTableComponent implements OnInit, AfterViewInit {
- 
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   dataSource: RecordsTableDataSource;
   requestId: number;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'fileName', 'status', 'esRef'];
+  displayedColumns = ['id', 'fileName', 'status', 'inScope', 'esRef'];
 
-  constructor(private http: AppHttpService, private route: ActivatedRoute){
-
-  }
+  constructor(private http: AppHttpService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.getRequestIdFromRoute();

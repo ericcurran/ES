@@ -174,5 +174,13 @@ namespace StorageService
                     File.Delete(destinationFile);                
            
         }
+
+        public async Task<Stream> DownloadFile(string fileName)
+        {
+            var blockBlob = cloudBlobContainer.GetBlockBlobReference(fileName);
+            var stream = new MemoryStream();
+            await blockBlob.DownloadToStreamAsync(stream);
+            return stream;
+        }
     }
 }

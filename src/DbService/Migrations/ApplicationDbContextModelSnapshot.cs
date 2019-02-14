@@ -15,9 +15,22 @@ namespace DbService.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
+                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Models.PdfPack", b =>
+                {
+                    b.Property<int>("Id");
+
+                    b.Property<string>("FileName");
+
+                    b.Property<int>("Status");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PdfPacks");
+                });
 
             modelBuilder.Entity("Models.RecordFile", b =>
                 {
@@ -28,6 +41,8 @@ namespace DbService.Migrations
                     b.Property<int?>("EsRef");
 
                     b.Property<string>("FileName");
+
+                    b.Property<bool>("InScope");
 
                     b.Property<int>("RequestPackageId");
 
@@ -52,6 +67,8 @@ namespace DbService.Migrations
 
                     b.Property<int?>("EsRef");
 
+                    b.Property<string>("PdfPackName");
+
                     b.Property<int>("Status");
 
                     b.Property<string>("ZipFileName");
@@ -59,6 +76,14 @@ namespace DbService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RequestPackages");
+                });
+
+            modelBuilder.Entity("Models.PdfPack", b =>
+                {
+                    b.HasOne("Models.RequestPackage", "RequestPackage")
+                        .WithOne("PdfPack")
+                        .HasForeignKey("Models.PdfPack", "Id")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Models.RecordFile", b =>

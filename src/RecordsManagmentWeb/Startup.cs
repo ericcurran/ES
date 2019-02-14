@@ -16,11 +16,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.NodeServices;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RecordsManagmentWeb.Services;
 using StorageService;
 
 namespace RecordsManagmentWeb
@@ -44,6 +46,7 @@ namespace RecordsManagmentWeb
             string ftpLogin     = Configuration["FtpLogin"];
             string ftpPassword  = Configuration["FtpPasword"];
             string processedDir = Configuration["ProcessedDir"];
+            string tempRecordPath = Configuration["RecordsTempPath"];
 
             services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(connectionString));
 
@@ -60,17 +63,30 @@ namespace RecordsManagmentWeb
             services.AddTransient(s =>
             {
                 var logger = s.GetService<ILogger<FtpClient>>();
-             return new FtpClient(ftpUrl, ftpLogin, ftpPassword, processedDir, logger);
+                return new FtpClient(ftpUrl, ftpLogin, ftpPassword, processedDir, logger);
             });
             services.AddTransient<AppLogic>();
+            services.AddNodeServices(o=> {
+                o.LaunchWithDebugging = true;
+                o.DebuggingPort = 9229;
+            });
+            services.AddTransient(s=> {
+                var pdfService = new PdfGenearatorService(s.GetService<INodeServices>(), 
+                                                          s.GetService<ApplicationDbContext>(),
+                                                          s.GetService<BlobStorageService>(),
+                                                          tempRecordPath);
+                return pdfService;
 
-            //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            });
+
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("RequestManagmentDb")));
             ConfugureBasicMvc(services);
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            
         }
 
     
@@ -166,6 +182,7 @@ namespace RecordsManagmentWeb
                 //options.Filters.Add(new AuthorizeFilter(policy));
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
         }
     }
 }
