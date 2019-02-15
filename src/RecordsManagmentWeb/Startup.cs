@@ -22,6 +22,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using RecordsManagmentWeb.NodeJs;
 using RecordsManagmentWeb.Services;
 using StorageService;
 
@@ -47,7 +49,10 @@ namespace RecordsManagmentWeb
             string ftpPassword  = Configuration["FtpPasword"];
             string processedDir = Configuration["ProcessedDir"];
             string tempRecordPath = Configuration["RecordsTempPath"];
+            string recordsTempPath = Configuration["RecordsTempPath"];
+            string nodeAppFile  = Configuration["NodeAppFile"];
 
+            services.Configure<NodeOptions>(Configuration.GetSection("NodeOptions"));
             services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(connectionString));
 
             services.AddTransient((s) =>
@@ -66,15 +71,12 @@ namespace RecordsManagmentWeb
                 return new FtpClient(ftpUrl, ftpLogin, ftpPassword, processedDir, logger);
             });
             services.AddTransient<AppLogic>();
-            services.AddNodeServices(o=> {
-                o.LaunchWithDebugging = true;
-                o.DebuggingPort = 9229;
-            });
+            services.AddNodeServices();
             services.AddTransient(s=> {
                 var pdfService = new PdfGenearatorService(s.GetService<INodeServices>(), 
                                                           s.GetService<ApplicationDbContext>(),
                                                           s.GetService<BlobStorageService>(),
-                                                          tempRecordPath);
+                                                          s.GetService<IOptions<NodeOptions>>());
                 return pdfService;
 
             });
@@ -87,9 +89,7 @@ namespace RecordsManagmentWeb
             });
 
             
-        }
-
-    
+        }    
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

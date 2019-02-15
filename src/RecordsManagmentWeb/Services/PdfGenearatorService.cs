@@ -1,6 +1,8 @@
 ﻿using DbService;
 using Microsoft.AspNetCore.NodeServices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using RecordsManagmentWeb.NodeJs;
 using StorageService;
 using System;
 using System.Collections.Generic;
@@ -17,19 +19,21 @@ namespace RecordsManagmentWeb.Services
         private readonly ApplicationDbContext _db;
         private readonly BlobStorageService _blobService;
         private readonly string _tempRecordPath;
+        private readonly string _nodePath;
 
-        public PdfGenearatorService(INodeServices node, ApplicationDbContext db, BlobStorageService blobService, string tempRecordPath)
+        public PdfGenearatorService(INodeServices node, ApplicationDbContext db, BlobStorageService blobService, IOptions<NodeOptions> nodeOPtions)
         {
             _node = node;
             _db = db;
             _blobService = blobService;
-            _tempRecordPath = tempRecordPath;
+            _tempRecordPath = nodeOPtions.Value.RecordsTempPath;
+            _nodePath = nodeOPtions.Value.NodeAppFile;
         }
         public async Task GeneratePdf(CancellationToken stoppingToken, int id)  
         {
             var tempDir = $"{_tempRecordPath}\\{Guid.NewGuid().ToString()}";
             IEnumerable<string> savedFiles = await DownloadPackFiles(id, tempDir);
-            var fileName = await _node.InvokeExportAsync<string>("../PdfGeneratorTs/dist/app.js", "callFromAsp", tempDir);
+            var fileName = await _node.InvokeExportAsync<string>(_nodePath, "callFromAsp", tempDir);
             await SavePdfReport(fileName, tempDir, id);            
             DeletePackFiles(tempDir);
         }
