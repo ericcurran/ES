@@ -1,10 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material';
+import { RecordDoc } from './records-table/record';
 
 @Injectable()
 export class AppHttpService {
-
+  
     constructor(private http: HttpClient) {
     }
 
@@ -24,6 +25,14 @@ export class AppHttpService {
 
     generateReport(id: number) {
         return this.http.post(`/api/pack/${id}`, undefined);
+    }
+
+    testNodeService() {
+        return this.http.get(`/api/pack/test`);
+    }
+
+    putRecord(row: RecordDoc): any {
+        return this.http.put(`/api/record/${row.id}`, row);
     }
 }
 

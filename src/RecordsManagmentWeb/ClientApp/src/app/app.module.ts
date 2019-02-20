@@ -13,13 +13,13 @@ import { LayoutModule } from '@angular/cdk/layout';
 
 import { MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule,
          MatListModule, MatTableModule, MatPaginatorModule, MatSortModule,
-         MatGridListModule, MatCardModule, MatMenuModule} from '@angular/material';
+         MatGridListModule, MatCardModule, MatMenuModule, MatCheckboxModule, MatInputModule} from '@angular/material';
 
 import { RequestsTableComponent } from './requests-table/requests-table.component';
 import { RecordsTableComponent } from './records-table/records-table.component';
 import { HomeComponent } from './home/home.component';
 import { AppHttpService } from './app-http.service';
-import { environment } from '../environments/environment';
+// import { environment } from '../environments/environment';
 
 
 @NgModule({
@@ -35,18 +35,18 @@ import { environment } from '../environments/environment';
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
-    MsAdalAngular6Module.forRoot({
-      tenant: environment.azureAdTenantId,
-      clientId: environment.azureAdClientId,
-      redirectUri: window.location.origin,
-      endpoints: {
-        'https://localhost:5001/api/': '10204d32-ea7b-4608-81eb-e35ff52d4428'
-      },
-      navigateToLoginRequestUrl: false,
-      cacheLocation: 'localStorage',
-    }),
+    // MsAdalAngular6Module.forRoot({
+    //   tenant: environment.azureAdTenantId,
+    //   clientId: environment.azureAdClientId,
+    //   redirectUri: window.location.origin,
+    //   endpoints: {
+    //     'https://recordsmanagement-sys.azurewebsites.net/api/': '34e6efd0-c8db-48c3-90c4-0bc9ddb36cfe'
+    //   },
+    //   navigateToLoginRequestUrl: false,
+    //   cacheLocation: 'localStorage',
+    // }),
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AuthenticationGuard] },
+      { path: '', component: HomeComponent, pathMatch: 'full'/*, canActivate: [AuthenticationGuard]*/ },
       { path: 'requests', component: RequestsTableComponent, pathMatch: 'full' },
       { path: 'records', component: RecordsTableComponent }
     ]),
@@ -61,7 +61,9 @@ import { environment } from '../environments/environment';
     MatSortModule,
     MatGridListModule,
     MatCardModule,
-    MatMenuModule
+    MatMenuModule,
+    MatCheckboxModule,
+    MatInputModule
   ],
   providers: [AuthenticationGuard, AppHttpService],
   bootstrap: [AppComponent]

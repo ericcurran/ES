@@ -4,6 +4,7 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { RecordsTableDataSource } from './records-table-datasource';
 import { ActivatedRoute } from '@angular/router';
 import { tap } from 'rxjs/operators';
+import { RecordDoc } from './record';
 
 @Component({
   selector: 'app-records-table',
@@ -48,6 +49,21 @@ export class RecordsTableComponent implements OnInit, AfterViewInit {
       id = 0;
     }
     this.requestId = id;
+  }
+
+  onRecordScopeChanged(value: boolean, row: RecordDoc) {
+    row.inScope = value;
+    this.http.putRecord(row)
+      .subscribe(() => {
+
+    });
+  }
+
+  onEsRefBlur(row: RecordDoc) {
+    this.http.putRecord(row)
+      .subscribe(() => {
+
+    });
   }
 
 

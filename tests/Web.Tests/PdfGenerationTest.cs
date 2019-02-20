@@ -2,8 +2,10 @@ using DbService;
 using Microsoft.AspNetCore.NodeServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using RecordsManagmentWeb.Controllers;
+using RecordsManagmentWeb.NodeJs;
 using RecordsManagmentWeb.Services;
 using StorageService;
 using System;
@@ -38,9 +40,10 @@ namespace Web.Tests
 
             var blobService = new BlobStorageService(blobStorageConnString, blobContainer, loggerMock.Object) ;
 
-            string tempRecordPath = "C:\\Temp\\Records\\";
+            var  nodeOptMock = new Mock<IOptions<NodeOptions>>();
+            var logger = new Mock<ILogger<PdfGenearatorService>>();
 
-            var service = new PdfGenearatorService(nodeMock.Object, context,blobService,tempRecordPath);
+            var service = new PdfGenearatorService(nodeMock.Object, context,blobService,nodeOptMock.Object, logger.Object);
             var token = new CancellationToken();
             var packId = 8002;
 

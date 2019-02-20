@@ -71,12 +71,15 @@ namespace RecordsManagmentWeb
                 return new FtpClient(ftpUrl, ftpLogin, ftpPassword, processedDir, logger);
             });
             services.AddTransient<AppLogic>();
-            services.AddNodeServices();
+            services.AddNodeServices((opt)=> {
+               
+            });
             services.AddTransient(s=> {
                 var pdfService = new PdfGenearatorService(s.GetService<INodeServices>(), 
                                                           s.GetService<ApplicationDbContext>(),
                                                           s.GetService<BlobStorageService>(),
-                                                          s.GetService<IOptions<NodeOptions>>());
+                                                          s.GetService<IOptions<NodeOptions>>(),
+                                                          s.GetService<ILogger<PdfGenearatorService>>());
                 return pdfService;
 
             });
@@ -96,12 +99,12 @@ namespace RecordsManagmentWeb
         {
             UseBasicMvc(app, env);
 
-            app.UseHangfireServer();
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions()
-            {
-                Authorization = new[] { new HangfireAuthorization() },
-            });
-            RunJob(app, env);
+            //app.UseHangfireServer();
+            //app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+            //{
+            //    Authorization = new[] { new HangfireAuthorization() },
+            //});
+            //RunJob(app, env);
 
             
         }
@@ -121,10 +124,15 @@ namespace RecordsManagmentWeb
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                //This temporary solution
+                app.UseDeveloperExceptionPage();
+
+                //app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 //app.UseHsts();
             }
+
+
 
             //app.UseHttpsRedirection();
             app.UseFileServer();

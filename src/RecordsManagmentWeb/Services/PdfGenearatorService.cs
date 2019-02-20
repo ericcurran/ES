@@ -1,6 +1,7 @@
 ﻿using DbService;
 using Microsoft.AspNetCore.NodeServices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RecordsManagmentWeb.NodeJs;
 using StorageService;
@@ -18,17 +19,31 @@ namespace RecordsManagmentWeb.Services
         private readonly INodeServices _node;
         private readonly ApplicationDbContext _db;
         private readonly BlobStorageService _blobService;
+        private readonly ILogger<PdfGenearatorService> _logger;
         private readonly string _tempRecordPath;
         private readonly string _nodePath;
 
-        public PdfGenearatorService(INodeServices node, ApplicationDbContext db, BlobStorageService blobService, IOptions<NodeOptions> nodeOPtions)
+        public PdfGenearatorService(INodeServices node, 
+            ApplicationDbContext db, 
+            BlobStorageService blobService, 
+            IOptions<NodeOptions> nodeOPtions,
+            ILogger<PdfGenearatorService> logger)
         {
             _node = node;
             _db = db;
             _blobService = blobService;
+            _logger = logger;
             _tempRecordPath = nodeOPtions.Value.RecordsTempPath;
             _nodePath = nodeOPtions.Value.NodeAppFile;
         }
+
+        public async Task<string> TestServcie(CancellationToken t)
+        {
+            _logger.LogInformation(_nodePath);
+            var ok = await _node.InvokeExportAsync<string>(_nodePath, "testCall");
+            return ok;
+        }
+
         public async Task GeneratePdf(CancellationToken stoppingToken, int id)  
         {
             var tempDir = $"{_tempRecordPath}\\{Guid.NewGuid().ToString()}";

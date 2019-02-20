@@ -26,5 +26,14 @@ namespace RecordsManagmentWeb.Controllers
             return Ok();
             
         }
+
+        [HttpGet("test")]
+        public async Task<IActionResult> TestNodeService([FromServices] PdfGenearatorService pdfService)
+        {
+            CancellationToken t = new CancellationToken();
+            string okResult = await pdfService.TestServcie(t);
+            return Ok(okResult);            
+        }
+
     }
 }

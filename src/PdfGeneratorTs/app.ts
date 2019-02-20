@@ -19,6 +19,10 @@ export function callFromAsp(callback: any, tempDir: string) {
 
 }
 
+export function testCall(callback: any){
+    callback(null, 'ok');
+}
+
 function addPdfPage(pdfDoc, fileName) {
     const page = pdfDoc.createPage(0,0,210,297);
     var cxt = pdfDoc.startPageContentContext(page);
