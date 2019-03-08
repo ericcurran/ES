@@ -570,6 +570,8 @@ THE SOFTWARE.
 
 @angular/material/menu
 
+microsoft-adal-angular6
+
 @angular/material/sort
 
 @angular/material/table
@@ -585,13 +587,13 @@ MIT
 
 @angular/material/paginator
 
+@angular/material/checkbox
+
 @angular/material/sidenav
 
 @angular/material/toolbar
 
 @angular/material/list
-
-microsoft-adal-angular6
 
 core-js
 MIT

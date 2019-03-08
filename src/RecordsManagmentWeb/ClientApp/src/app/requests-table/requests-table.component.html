@@ -47,6 +47,27 @@
         </td>
       </ng-container>
 
+      <ng-container matColumnDef="claimNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Claim Num</th>
+        <td mat-cell *matCellDef="let row">{{row.claimNumber}}</td>
+      </ng-container>
+      <ng-container matColumnDef="dateOfLoss">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Loss</th>
+        <td mat-cell *matCellDef="let row">{{row.dateOfLoss}}</td>
+      </ng-container>
+      <ng-container matColumnDef="dateOfService">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Service</th>
+        <td mat-cell *matCellDef="let row">{{row.dateOfService}}</td>
+      </ng-container>
+      <ng-container matColumnDef="insuredName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Insured Name</th>
+        <td mat-cell *matCellDef="let row">{{row.insuredName}}</td>
+      </ng-container>
+      <ng-container matColumnDef="phase">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Phase</th>
+        <td mat-cell *matCellDef="let row">{{row.phase}}</td>
+      </ng-container>
+
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

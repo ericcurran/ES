@@ -64,6 +64,7 @@ namespace DbService
                             var request = await db.RequestPackages.FindAsync(record.RequestPackageId);
                             request.DeatilsFileName = record.FileName;
                             request.DetailsRecordId = record.Id;
+                            request.ClaimNumber = record.ClaimNumber;
                             await db.SaveChangesAsync();
                         }
                     }

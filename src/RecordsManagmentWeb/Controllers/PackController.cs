@@ -21,9 +21,9 @@ namespace RecordsManagmentWeb.Controllers
         public async Task<IActionResult> Post([FromRoute]int id, [FromServices] PdfGenearatorService pdfService )
         {
             CancellationToken t = new CancellationToken();
-            await pdfService.GeneratePdf(t, id);
+            string fileName = await pdfService.GeneratePdf(t, id);
 
-            return Ok();
+            return Ok(fileName);
             
         }
 

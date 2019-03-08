@@ -1,22 +1,44 @@
-﻿import { createWriter, PDFStreamForResponse } from "hummus";
+﻿import { createWriter } from "hummus";
 import * as fs from "fs";
+import { PdfItem } from "./pdfItem";
 
+export function callFromAsp(callback: any, tempDir: string, fontFile:string) {
+    const pdfData: Array<PdfItem> = require(`${tempDir}\\pdf-data.json`);
+    const fileName = `${new Date().getTime()}.pdf`;
+    const target = `${tempDir}\\${fileName}`;
+    const pdfDoc = createWriter(target);
+    addPdfPage(pdfDoc, `${tempDir}\\${pdfData[0].fileName}`);
+    addDetailsList(pdfDoc, pdfData, fontFile);
 
-export function callFromAsp(callback: any, tempDir: string) {
-    getFileNames(tempDir).then((files) => {
-        const fileName = `${new Date().getTime()}.pdf`;
-        const target = `${tempDir}\\${fileName}`;
-        const pdfDoc = createWriter(target);
-        files.forEach(f => {
-            addPdfPage(pdfDoc, `${tempDir}\\${f}`);
-        });
-        pdfDoc.end();
-         callback(null,fileName);
-    }, (err) => {        
-        callback(err,null);
-    });
+    for (let i = 1; i < pdfData.length; i++) {
+        const file = pdfData[i].fileName;
+        addPdfPage(pdfDoc, `${tempDir}\\${file}`);
+    }
 
+    pdfDoc.end();
+    callback(null, fileName);
+}
 
+function addDetailsList(pdfDoc, pdfData:Array<PdfItem>, fontFile:string) {
+    const page = pdfDoc.createPage(0, 0, 210, 297);
+    var cxt = pdfDoc.startPageContentContext(page);
+    var textOptions = {
+        font: pdfDoc.getFontForFile(fontFile),
+        size: 3,
+        colorspace: 'gray',
+        color: 0x00
+    };
+    let height = 290;
+    let count = 1;
+    for (let i = 0; i < pdfData.length; i++) {
+        const file = pdfData[i];
+        if (file.inLog) {
+            cxt.writeText(`${count}. ${file.fileName};`, 10, height, textOptions);
+            height -= 5;
+            count++;
+        }
+    }
+    pdfDoc.writePage(page);
 }
 
 export function testCall(callback: any){
@@ -32,7 +54,7 @@ function addPdfPage(pdfDoc, fileName) {
 
 function getFileNames(dir: string): Promise<Array<string>> {
     return new Promise((resolve, reject) => {
-        fs.readdir(dir, (err, fileNames) => {
+            fs.readdir(dir, (err, fileNames) => {
             const files = [];
             if (err) {
                 reject(err);

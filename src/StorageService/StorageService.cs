@@ -69,7 +69,7 @@ namespace StorageService
             return items;
         }
 
-        public async Task<RecordFile> SaveFileToBlob(string localFileName, Stream sourceFile)
+        public async Task<string> SaveFileToBlob(string localFileName, Stream sourceFile)
         {
 
             CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(localFileName);
@@ -89,11 +89,7 @@ namespace StorageService
             await cloudBlockBlob.UploadFromStreamAsync(sourceFile,null,null,context);
            
             _log.LogInformation($"file {localFileName} ended to save in blob");
-            return new RecordFile()
-            {
-                FileName = localFileName,
-                Status = status
-            };
+            return localFileName;
         }
         
         public static async Task ProcessAsync()

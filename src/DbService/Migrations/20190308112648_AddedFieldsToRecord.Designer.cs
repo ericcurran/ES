@@ -4,14 +4,16 @@ using DbService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DbService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190308112648_AddedFieldsToRecord")]
+    partial class AddedFieldsToRecord
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +56,7 @@ namespace DbService.Migrations
 
                     b.Property<int>("OrderNumber");
 
-                    b.Property<int>("PageNumber");
+                    b.Property<string>("PageNumber");
 
                     b.Property<string>("Phase");
 
@@ -77,25 +79,13 @@ namespace DbService.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ClaimNumber");
-
-                    b.Property<DateTime>("DateOfLoss");
-
-                    b.Property<DateTime>("DateOfService");
-
                     b.Property<string>("DeatilsFileName");
 
                     b.Property<int?>("DetailsRecordId");
 
                     b.Property<int?>("EsRef");
 
-                    b.Property<string>("InsuredName");
-
                     b.Property<string>("PdfPackName");
-
-                    b.Property<string>("Phase");
-
-                    b.Property<string>("RequestId");
 
                     b.Property<int>("Status");
 

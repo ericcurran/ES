@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.NodeServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using RecordsManagmentWeb.NodeJs;
 using StorageService;
 using System;
@@ -22,19 +24,21 @@ namespace RecordsManagmentWeb.Services
         private readonly ILogger<PdfGenearatorService> _logger;
         private readonly string _tempRecordPath;
         private readonly string _nodePath;
+        private readonly string _pdfFont;
 
         public PdfGenearatorService(INodeServices node, 
             ApplicationDbContext db, 
             BlobStorageService blobService, 
-            IOptions<NodeOptions> nodeOPtions,
+            IOptions<NodeOptions> nodeOptions,
             ILogger<PdfGenearatorService> logger)
         {
             _node = node;
             _db = db;
             _blobService = blobService;
             _logger = logger;
-            _tempRecordPath = nodeOPtions.Value.RecordsTempPath;
-            _nodePath = nodeOPtions.Value.NodeAppFile;
+            _tempRecordPath = nodeOptions.Value.RecordsTempPath;
+            _nodePath = nodeOptions.Value.NodeAppFile;
+            _pdfFont = nodeOptions.Value.PdfFont;
         }
 
         public async Task<string> TestServcie(CancellationToken t)
@@ -44,13 +48,14 @@ namespace RecordsManagmentWeb.Services
             return ok;
         }
 
-        public async Task GeneratePdf(CancellationToken stoppingToken, int id)  
+        public async Task<string> GeneratePdf(CancellationToken stoppingToken, int id)
         {
             var tempDir = $"{_tempRecordPath}\\{Guid.NewGuid().ToString()}";
-            IEnumerable<string> savedFiles = await DownloadPackFiles(id, tempDir);
-            var fileName = await _node.InvokeExportAsync<string>(_nodePath, "callFromAsp", tempDir);
-            await SavePdfReport(fileName, tempDir, id);            
+            await DownloadPackFiles(id, tempDir);
+            var fileName = await _node.InvokeExportAsync<string>(_nodePath, "callFromAsp", tempDir, _pdfFont);
+            await SavePdfReport(fileName, tempDir, id);
             DeletePackFiles(tempDir);
+            return fileName;
         }
 
         private async Task SavePdfReport(string fileName, string tempDir, int requestId)
@@ -69,19 +74,17 @@ namespace RecordsManagmentWeb.Services
             Directory.Delete(tempDir, true);
         }
 
-        private async Task<IEnumerable<string>> DownloadPackFiles(int id, string tempDir)
+        private async Task DownloadPackFiles(int id, string tempDir)
         {
             var files = await GetFileNames(id);
             if (files == null)
             {
-                return null;
+                return;
             }
-            await DownloadFileToLocalFolder(files, tempDir);
-
-            return files;
+            await DownloadFileToLocalFolder(files, tempDir);          
         }
 
-        private async Task DownloadFileToLocalFolder(IEnumerable<string> files, string tempDir)
+        private async Task DownloadFileToLocalFolder(IEnumerable<PdfItemData> files, string tempDir)
         {
             if (Directory.Exists(tempDir))
             {
@@ -90,7 +93,7 @@ namespace RecordsManagmentWeb.Services
             Directory.CreateDirectory(tempDir);
 
             var savedTasks = new Dictionary<string,Task<Stream>>();
-            foreach (var file in files)
+            foreach (var file in files.Select(f=>f.FileName))
             {
                 var t = _blobService.DownloadFile(file);
                 savedTasks.Add(file, t);
@@ -112,6 +115,18 @@ namespace RecordsManagmentWeb.Services
                     await SaveRecordOnDisk(kv.Key, kv.Value.Result, tempDir);
                 }
             }
+
+            await SaveJsonOnDisk(files, tempDir);
+        }
+
+        private async Task SaveJsonOnDisk(IEnumerable<PdfItemData> files, string tempDir)
+        {
+            var jsonSettings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+            string json = JsonConvert.SerializeObject(files, jsonSettings );
+            using (var jsonFile = new StreamWriter(Path.Combine(tempDir, "pdf-data.json")))
+            {
+                await jsonFile.WriteLineAsync(json);
+            }
         }
 
         private async  Task SaveRecordOnDisk(string fileName, Stream result, string tempDir)
@@ -123,7 +138,7 @@ namespace RecordsManagmentWeb.Services
             }
         }
 
-        private async Task<IEnumerable<string>> GetFileNames(int id)
+        private async Task<IEnumerable<PdfItemData>> GetFileNames(int id)
         {
             Directory.Exists(_tempRecordPath);
             var requestPack = await _db.RequestPackages.AsNoTracking().FirstOrDefaultAsync(rp => rp.Id == id);
@@ -131,11 +146,13 @@ namespace RecordsManagmentWeb.Services
             {
                 return null;
             }
-            var files = new List<string>(new[] { requestPack.DeatilsFileName });
-            IEnumerable<string> recordFiles = await _db.RecordFiles
+            var files = new List<PdfItemData>(new[] {
+                new PdfItemData(){FileName = requestPack.DeatilsFileName, InLog=false}
+            });
+            IEnumerable<PdfItemData> recordFiles = await _db.RecordFiles
                                                        .Where(f => f.RequestPackageId == id && f.InScope 
                                                                 && f.Id!=requestPack.DetailsRecordId)
-                                                       .Select(f => f.FileName)
+                                                       .Select(f =>new PdfItemData() { FileName = f.FileName, InLog = f.InLog })
                                                        .ToListAsync();
             files.AddRange(recordFiles);
             return files;

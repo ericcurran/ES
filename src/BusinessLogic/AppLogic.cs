@@ -59,7 +59,7 @@ namespace BusinessLogic
         {
 
             var savedRecords = new List<RecordFile>();
-            var savedTasks = new List<Task<RecordFile>>();
+            var savedTasks = new List<Task<string>>();
             Task whenAllTask = null;
             foreach (var record in records)
             {
@@ -69,25 +69,34 @@ namespace BusinessLogic
                 {
                     whenAllTask = Task.WhenAll(savedTasks);
                     await whenAllTask;
-                    savedTasks.ForEach(t =>
-                    {
-                        t.Result.RequestPackageId = zipId;
-                        savedRecords.Add(t.Result);
-                    });
+                    AddFileRecords(zipId, savedRecords, savedTasks);
                     savedTasks.Clear();
                 }
             }
             if (savedTasks.Count > 0)
             {
                 await Task.WhenAll(savedTasks);
-                savedTasks.ForEach(t =>
-                {
-                    t.Result.RequestPackageId = zipId;
-                    savedRecords.Add(t.Result);
-                });
+                AddFileRecords(zipId, savedRecords, savedTasks);
             }
-
             return savedRecords;
+        }
+
+        private void AddFileRecords(int zipId, List<RecordFile> savedRecords, List<Task<string>> savedTasks)
+        {
+            foreach (var t in savedTasks)
+            {
+                var fileName = new RecordFileName(t.Result);
+                var recordFile = new RecordFile();
+                recordFile.FileName = t.Result;
+                recordFile.RequestPackageId = zipId;
+                recordFile.ClaimNumber = fileName.ClaimNumber;
+                recordFile.BundleNumber = fileName.BundleNumber;
+                recordFile.PageNumber = fileName.PageNumber;
+                recordFile.OrderNumber = fileName.OrderNumber;
+
+
+                savedRecords.Add(recordFile);
+            }
         }
 
         public async Task<List<RequestPackage>> GetZipFileList()

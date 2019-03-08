@@ -5,7 +5,15 @@ export class RecordDoc {
     fileName: string;
     status: RecordStatusEnum;
     inScope: boolean;
+    inLog: boolean;
     requestPackageId: number;
     esRef?: number;
+    claimNumber: string;
+    bundleNumber: string;
+    pageNumber: number;
+    orderNumber: number;
+    startDate: string;
+    log: string;
+    phase: string;
 }
 

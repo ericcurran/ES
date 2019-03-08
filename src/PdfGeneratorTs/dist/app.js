@@ -2,21 +2,46 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var hummus_1 = require("hummus");
 var fs = require("fs");
-function callFromAsp(callback, tempDir) {
-    getFileNames(tempDir).then(function (files) {
-        var fileName = new Date().getTime() + ".pdf";
-        var target = tempDir + "\\" + fileName;
-        var pdfDoc = hummus_1.createWriter(target);
-        files.forEach(function (f) {
-            addPdfPage(pdfDoc, tempDir + "\\" + f);
-        });
-        pdfDoc.end();
-        callback(null, fileName);
-    }, function (err) {
-        callback(err, null);
-    });
+function callFromAsp(callback, tempDir, fontFile) {
+    var pdfData = require(tempDir + "\\pdf-data.json");
+    var fileName = new Date().getTime() + ".pdf";
+    var target = tempDir + "\\" + fileName;
+    var pdfDoc = hummus_1.createWriter(target);
+    addPdfPage(pdfDoc, tempDir + "\\" + pdfData[0].fileName);
+    addDetailsList(pdfDoc, pdfData, fontFile);
+    for (var i = 1; i < pdfData.length; i++) {
+        var file = pdfData[i].fileName;
+        addPdfPage(pdfDoc, tempDir + "\\" + file);
+    }
+    pdfDoc.end();
+    callback(null, fileName);
 }
 exports.callFromAsp = callFromAsp;
+function addDetailsList(pdfDoc, pdfData, fontFile) {
+    var page = pdfDoc.createPage(0, 0, 210, 297);
+    var cxt = pdfDoc.startPageContentContext(page);
+    var textOptions = {
+        font: pdfDoc.getFontForFile(fontFile),
+        size: 3,
+        colorspace: 'gray',
+        color: 0x00
+    };
+    var height = 290;
+    var count = 1;
+    for (var i = 0; i < pdfData.length; i++) {
+        var file = pdfData[i];
+        if (file.inLog) {
+            cxt.writeText(count + ". " + file.fileName + ";", 10, height, textOptions);
+            height -= 5;
+            count++;
+        }
+    }
+    pdfDoc.writePage(page);
+}
+function testCall(callback) {
+    callback(null, 'ok');
+}
+exports.testCall = testCall;
 function addPdfPage(pdfDoc, fileName) {
     var page = pdfDoc.createPage(0, 0, 210, 297);
     var cxt = pdfDoc.startPageContentContext(page);

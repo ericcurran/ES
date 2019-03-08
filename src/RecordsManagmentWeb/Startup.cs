@@ -9,6 +9,7 @@ using FtpService;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,12 +32,14 @@ namespace RecordsManagmentWeb
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+       public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment Env { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -48,9 +51,6 @@ namespace RecordsManagmentWeb
             string ftpLogin     = Configuration["FtpLogin"];
             string ftpPassword  = Configuration["FtpPasword"];
             string processedDir = Configuration["ProcessedDir"];
-            string tempRecordPath = Configuration["RecordsTempPath"];
-            string recordsTempPath = Configuration["RecordsTempPath"];
-            string nodeAppFile  = Configuration["NodeAppFile"];
 
             services.Configure<NodeOptions>(Configuration.GetSection("NodeOptions"));
             services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(connectionString));
@@ -74,6 +74,7 @@ namespace RecordsManagmentWeb
             services.AddNodeServices((opt)=> {
                
             });
+            
             services.AddTransient(s=> {
                 var pdfService = new PdfGenearatorService(s.GetService<INodeServices>(), 
                                                           s.GetService<ApplicationDbContext>(),
@@ -99,11 +100,11 @@ namespace RecordsManagmentWeb
         {
             UseBasicMvc(app, env);
 
-            //app.UseHangfireServer();
-            //app.UseHangfireDashboard("/hangfire", new DashboardOptions()
-            //{
-            //    Authorization = new[] { new HangfireAuthorization() },
-            //});
+            app.UseHangfireServer();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+            {
+                Authorization = new[] { new HangfireAuthorization() },
+            });
             //RunJob(app, env);
 
             
@@ -112,7 +113,7 @@ namespace RecordsManagmentWeb
         private void RunJob(IApplicationBuilder app, IHostingEnvironment env)
         {
             var appJob = app.ApplicationServices.GetService<AppLogic>();
-            RecurringJob.AddOrUpdate(() => appJob.Run(), Cron.MinuteInterval(10));
+            //RecurringJob.AddOrUpdate(() => appJob.Run(), Cron.MinuteInterval(10));
                         
         }
 
@@ -179,8 +180,39 @@ namespace RecordsManagmentWeb
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
-                .AddAzureAD(options => Configuration.Bind("AzureAd", options));
+            //services.AddAuthorization(o =>
+            //{
+            //    o.AddPolicy("Default", policy =>
+            //    {
+            //        policy.RequireAuthenticatedUser();
+            //        //To require the basic user_impersonation scope across the API, you can use:
+            //       //policy..RequirePermissions(
+            //       //    delegated: new[] { "user_impersonation" },
+            //       //    application: new string[0]);
+            //    });
+            //});
+
+            services
+                  .AddAuthentication(AzureADDefaults.AuthenticationScheme)
+                  .AddAzureAD(options => Configuration.Bind("AzureAd", options));
+                 // .AddAuthentication(o =>
+                 // {
+                 //     o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                 // })
+                 //.AddJwtBearer("AzureAdToken", options =>
+                 //{
+                 //    options.Authority = Configuration["AzureAd:Authority"];
+                 //    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                 //    {
+                 //        // Both App ID URI and client id are valid audiences in the access token
+                 //        ValidAudiences = new List<string>
+                 //   {
+                 //       Configuration["AzureAd:AppIdUri"],
+                 //       Configuration["AzureAd:ClientId"]
+                 //   }
+                 //    };
+                 //});
+           // services.AddSingleton<IClaimsTransformation, AzureAdScopeClaimTransformation>();
 
             services.AddMvc(options =>
             {

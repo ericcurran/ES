@@ -2,12 +2,15 @@
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+
 export const environment = {
   production: false,
   azureAdTenantId: '1ad5568a-c025-4749-b1d4-868d82da39eb',
-
   azureAdClientId: 'cee2d7b1-2c63-4343-8272-d72c22e40caa',
-  webApiEndpoint: 'https://localhost:5001/api/',
+  webApiEndpoint:'http://localhost:4200',
+  endpoints: {
+    'http://localhost:4200': '10204d32-ea7b-4608-81eb-e35ff52d4428' //API Client Id
+  }
 };
 
 /*

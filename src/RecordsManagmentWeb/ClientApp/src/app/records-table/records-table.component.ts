@@ -19,7 +19,8 @@ export class RecordsTableComponent implements OnInit, AfterViewInit {
   requestId: number;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'fileName', 'status', 'inScope', 'esRef'];
+  displayedColumns = ['id', 'fileName', 'status', 'inScope', 'inLog', 'esRef', 'claimNumber',
+  'bundleNumber', 'pageNumber', 'orderNumber', 'startDate', 'log', 'phase'];
 
   constructor(private http: AppHttpService, private route: ActivatedRoute) { }
 
@@ -53,6 +54,14 @@ export class RecordsTableComponent implements OnInit, AfterViewInit {
 
   onRecordScopeChanged(value: boolean, row: RecordDoc) {
     row.inScope = value;
+    this.http.putRecord(row)
+      .subscribe(() => {
+
+    });
+  }
+
+  onRecordLogChanged(value: boolean, row: RecordDoc) {
+    row.inLog = value;
     this.http.putRecord(row)
       .subscribe(() => {
 

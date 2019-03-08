@@ -9,5 +9,7 @@ namespace RecordsManagmentWeb.NodeJs
     {
         public string RecordsTempPath { get; set; }
         public string NodeAppFile { get; set; }
+        public string PdfFont { get; set; }
     }
+
 }

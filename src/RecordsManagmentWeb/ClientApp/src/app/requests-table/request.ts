@@ -6,5 +6,11 @@ export class RequestDoc {
     deatilsFileName: string;
     detailsRecordId: string;
     esRef?: number;
+    pdfPackName: string;
     status: RequestStatusEnum;
+    claimNumber: string;
+    insuredName: string;
+    dateOfLoss: string;
+    dateOfService: string;
+    phase: string;
 }
