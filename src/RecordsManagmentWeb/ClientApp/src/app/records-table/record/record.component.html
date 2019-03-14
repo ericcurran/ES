@@ -1,0 +1,61 @@
+<form [formGroup]="recordForm" novalidate (ngSubmit)="onSubmit()" *ngIf="record">
+  <mat-card class="shipping-card">
+    <mat-card-header>
+      <mat-card-title>{{record.fileName}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col">
+            <mat-checkbox formControlName="inScope">In Scope</mat-checkbox>
+        </div>
+        <div class="col">
+            <mat-checkbox formControlName="InLog">In Log</mat-checkbox>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Es Ref Number" formControlName="esRef">
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <textarea matInput placeholder="Log" formControlName="log"></textarea>           
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Status" formControlName="status">
+              <mat-option *ngFor="let state of statuses" [value]="status">
+                {{status}}
+              </mat-option>
+            </mat-select>            
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Phase" formControlName="phase">
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+           <mat-form-field>
+              <input matInput [matDatepicker]="picker" placeholder="Choose a date" ormControlName="startDate">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" type="submit">Submit</button>
+    </mat-card-actions>
+  </mat-card>
+</form>

@@ -5,7 +5,7 @@ import { RecordDoc } from './records-table/record';
 
 @Injectable()
 export class AppHttpService {
-  
+    
     constructor(private http: HttpClient) {
     }
 
@@ -27,11 +27,15 @@ export class AppHttpService {
         return this.http.post(`/api/pack/${id}`, undefined);
     }
 
+    getRecord(id: any): any {
+        return this.http.get(`/api/record/${id}`);
+    }
+
     testNodeService() {
         return this.http.get(`/api/pack/test`);
     }
 
-    putRecord(row: RecordDoc): any {
+    putRecord(row: RecordDoc) {
         return this.http.put(`/api/record/${row.id}`, row);
     }
 }

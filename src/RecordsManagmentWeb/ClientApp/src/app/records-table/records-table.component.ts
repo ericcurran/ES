@@ -20,7 +20,7 @@ export class RecordsTableComponent implements OnInit, AfterViewInit {
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['id', 'fileName', 'status', 'inScope', 'inLog', 'esRef', 'claimNumber',
-  'bundleNumber', 'pageNumber', 'orderNumber', 'startDate', 'log', 'phase'];
+  'bundleNumber', 'pageNumber', 'orderNumber', 'startDate', 'log', 'phase', 'edit'];
 
   constructor(private http: AppHttpService, private route: ActivatedRoute) { }
 
