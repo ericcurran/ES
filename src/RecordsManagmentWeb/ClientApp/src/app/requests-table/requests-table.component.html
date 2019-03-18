@@ -32,6 +32,13 @@
       <td mat-cell *matCellDef="let row">{{row.esRef}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="open">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Edit</th>
+      <td mat-cell *matCellDef="let row">
+        <a [routerLink]="[ '/request/' + row.id ]">Open</a>
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="requestPack">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Request Pack</th>
         <td mat-cell *matCellDef="let row">

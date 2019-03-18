@@ -24,6 +24,7 @@ import { AppHttpService } from './app-http.service';
 import { environment } from '../environments/environment';
 import { TokenInterceptor } from './token.interceptor';
 import { RecordComponent } from './records-table/record/record.component';
+import { RequestComponent } from './requests-table/request/request.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { RecordComponent } from './records-table/record/record.component';
     AppNavComponent,
     RequestsTableComponent,
     RecordsTableComponent,
-    RecordComponent
+    RecordComponent,
+    RequestComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -53,6 +55,7 @@ import { RecordComponent } from './records-table/record/record.component';
       { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AuthenticationGuard] },
       { path: 'requests', component: RequestsTableComponent, pathMatch: 'full', canActivate: [AuthenticationGuard] },
       { path: 'records', component: RecordsTableComponent , canActivate: [AuthenticationGuard]},
+      { path: 'request/:id', component: RequestComponent , canActivate: [AuthenticationGuard]},
       { path: 'record/:id', component: RecordComponent , canActivate: [AuthenticationGuard]},
     ]),
     LayoutModule,

@@ -560,11 +560,18 @@ THE SOFTWARE.
 
 @angular/material/tooltip
 
+@angular/material/dialog
+
+@angular/forms
+MIT
+
+@angular/material/button
+
+@angular/material/datepicker
+
 @angular/material/grid-list
 
 @angular/material/card
-
-@angular/material/button
 
 @angular/material/icon
 
@@ -579,9 +586,6 @@ microsoft-adal-angular6
 @angular/material/core
 
 @angular/material/form-field
-
-@angular/forms
-MIT
 
 @angular/material/select
 

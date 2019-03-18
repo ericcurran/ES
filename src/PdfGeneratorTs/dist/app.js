@@ -31,7 +31,7 @@ function addDetailsList(pdfDoc, pdfData, fontFile) {
     for (var i = 0; i < pdfData.length; i++) {
         var file = pdfData[i];
         if (file.inLog) {
-            cxt.writeText(count + ". " + file.fileName + ";", 10, height, textOptions);
+            cxt.writeText(count + ". " + file.log + ";", 10, height, textOptions);
             height -= 5;
             count++;
         }

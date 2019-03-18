@@ -152,7 +152,12 @@ namespace RecordsManagmentWeb.Services
             IEnumerable<PdfItemData> recordFiles = await _db.RecordFiles
                                                        .Where(f => f.RequestPackageId == id && f.InScope 
                                                                 && f.Id!=requestPack.DetailsRecordId)
-                                                       .Select(f =>new PdfItemData() { FileName = f.FileName, InLog = f.InLog })
+                                                       .Select(f => new PdfItemData()
+                                                       {
+                                                           FileName = f.FileName,
+                                                           InLog    = f.InLog,
+                                                           Log      = f.InLog ? f.Log : null
+                                                       })
                                                        .ToListAsync();
             files.AddRange(recordFiles);
             return files;

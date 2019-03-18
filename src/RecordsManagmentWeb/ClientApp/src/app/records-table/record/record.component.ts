@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { AppHttpService } from 'src/app/app-http.service';
 import { RecordDoc } from '../record';
-import { RecordStatusEnum } from '../record-status';
 
 @Component({
   selector: 'app-record-form',
@@ -11,13 +10,16 @@ import { RecordStatusEnum } from '../record-status';
   styleUrls: ['./record.component.scss']
 })
 export class RecordComponent implements OnInit {
-  record:RecordDoc;
-  recordForm:FormGroup;
-  statuses = [1, 2, 3];
+  record: RecordDoc;
+  recordForm: FormGroup;
+  statuses = [
+    { v: 0, t: 'Unknown' },
+    { v: 1, t: 'Saved to Azure' },
+    { v: 2, t: 'Not saved to Azure' }];
 
-  constructor(private fb: FormBuilder, 
-    private route: ActivatedRoute, 
-    private router: Router, 
+  constructor(private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
     private http: AppHttpService) { }
 
   ngOnInit(): void {
