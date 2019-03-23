@@ -169,7 +169,7 @@ namespace RecordsManagmentWeb.Services
         {
             var titleLines = new List<string>();
             titleLines.Add($"Today's Date: {DateTime.Now.ToString("MM/dd/yyyy")}");
-            titleLines.Add($"Claimant's Nate: {requestPack.InsuredName ?? "Not Defiend"}");
+            titleLines.Add($"Claimant's Date: {requestPack.InsuredName ?? "Not Defiend"}");
             titleLines.Add($"Claim Number: {requestPack.ClaimNumber ?? "Not Defiend"}");
             titleLines.Add($"Date of Accident: {requestPack.DateOfLoss.ToString("MM/dd/yyyy")}");
             titleLines.Add($"Date(s) of Service: {requestPack.DateOfService.ToString("MM/dd/yyyy")}");
