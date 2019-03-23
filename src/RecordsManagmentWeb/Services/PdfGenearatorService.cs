@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.NodeServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RecordsManagmentWeb.NodeJs;
@@ -76,15 +77,15 @@ namespace RecordsManagmentWeb.Services
 
         private async Task DownloadPackFiles(int id, string tempDir)
         {
-            var files = await GetFileNames(id);
-            if (files == null)
+            var jsonData = await GetFileNames(id);
+            if (jsonData == null)
             {
                 return;
             }
-            await DownloadFileToLocalFolder(files, tempDir);          
+            await DownloadFileToLocalFolder(jsonData, tempDir);          
         }
 
-        private async Task DownloadFileToLocalFolder(IEnumerable<PdfItemData> files, string tempDir)
+        private async Task DownloadFileToLocalFolder(PdfJsonData jsonData, string tempDir)
         {
             if (Directory.Exists(tempDir))
             {
@@ -93,7 +94,7 @@ namespace RecordsManagmentWeb.Services
             Directory.CreateDirectory(tempDir);
 
             var savedTasks = new Dictionary<string,Task<Stream>>();
-            foreach (var file in files.Select(f=>f.FileName))
+            foreach (var file in jsonData.LogItems.Select(f=>f.FileName))
             {
                 var t = _blobService.DownloadFile(file);
                 savedTasks.Add(file, t);
@@ -116,13 +117,13 @@ namespace RecordsManagmentWeb.Services
                 }
             }
 
-            await SaveJsonOnDisk(files, tempDir);
+            await SaveJsonOnDisk(jsonData, tempDir);
         }
 
-        private async Task SaveJsonOnDisk(IEnumerable<PdfItemData> files, string tempDir)
+        private async Task SaveJsonOnDisk(PdfJsonData jsonData, string tempDir)
         {
             var jsonSettings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
-            string json = JsonConvert.SerializeObject(files, jsonSettings );
+            string json = JsonConvert.SerializeObject(jsonData, jsonSettings);
             using (var jsonFile = new StreamWriter(Path.Combine(tempDir, "pdf-data.json")))
             {
                 await jsonFile.WriteLineAsync(json);
@@ -138,7 +139,7 @@ namespace RecordsManagmentWeb.Services
             }
         }
 
-        private async Task<IEnumerable<PdfItemData>> GetFileNames(int id)
+        private async Task<PdfJsonData> GetFileNames(int id)
         {
             Directory.Exists(_tempRecordPath);
             var requestPack = await _db.RequestPackages.AsNoTracking().FirstOrDefaultAsync(rp => rp.Id == id);
@@ -160,7 +161,20 @@ namespace RecordsManagmentWeb.Services
                                                        })
                                                        .ToListAsync();
             files.AddRange(recordFiles);
-            return files;
+            var titleData = GetLogTitle(requestPack);
+            return new PdfJsonData() { LogItems = files, LogTitle = titleData };
+        }
+
+        private IEnumerable<string> GetLogTitle(RequestPackage requestPack)
+        {
+            var titleLines = new List<string>();
+            titleLines.Add($"Today's Date: {DateTime.Now.ToString("MM/dd/yyyy")}");
+            titleLines.Add($"Claimant's Nate: {requestPack.InsuredName ?? "Not Defiend"}");
+            titleLines.Add($"Claim Number: {requestPack.ClaimNumber ?? "Not Defiend"}");
+            titleLines.Add($"Date of Accident: {requestPack.DateOfLoss.ToString("MM/dd/yyyy")}");
+            titleLines.Add($"Date(s) of Service: {requestPack.DateOfService.ToString("MM/dd/yyyy")}");
+            titleLines.Add("Undated, Procedure consent formsigned by claimant");
+            return titleLines;            
         }
     }
 }

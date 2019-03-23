@@ -6,4 +6,10 @@ var PdfItem = /** @class */ (function () {
     return PdfItem;
 }());
 exports.PdfItem = PdfItem;
+var PdfJsonData = /** @class */ (function () {
+    function PdfJsonData() {
+    }
+    return PdfJsonData;
+}());
+exports.PdfJsonData = PdfJsonData;
 //# sourceMappingURL=pdfItem.js.map

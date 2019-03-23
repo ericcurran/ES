@@ -3,3 +3,8 @@ export class PdfItem {
     inLog: boolean;
     log:string;
 }
+
+export class PdfJsonData {
+    logTitle: Array<string>;
+    logItems: Array<PdfItem>;
+}
