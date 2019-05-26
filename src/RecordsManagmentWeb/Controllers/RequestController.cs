@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DbService;
@@ -12,7 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace RecordsManagmentWeb.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]    
+    [ApiController]
+    //[Authorize]
     public class RequestController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -24,16 +24,16 @@ namespace RecordsManagmentWeb.Controllers
 
         // GET: api/Request
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RequestPackage>>> GetRequestPackages()
+        public async Task<ActionResult<IEnumerable<Request>>> GetRequestPackages()
         {
-            return await _context.RequestPackages.ToListAsync();
+            return await _context.Requests.ToListAsync();
         }
 
         // GET: api/Request/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RequestPackage>> GetRequestPackage(int id)
+        public async Task<ActionResult<Request>> GetRequestPackage(int id)
         {
-            var requestPackage = await _context.RequestPackages.FindAsync(id);
+            var requestPackage = await _context.Requests.FindAsync(id);
 
             if (requestPackage == null)
             {
@@ -45,7 +45,7 @@ namespace RecordsManagmentWeb.Controllers
 
         // PUT: api/Request/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRequestPackage(int id, RequestPackage requestPackage)
+        public async Task<IActionResult> PutRequestPackage(int id, Request requestPackage)
         {
             if (id != requestPackage.Id)
             {
@@ -75,9 +75,9 @@ namespace RecordsManagmentWeb.Controllers
 
         // POST: api/Request
         [HttpPost]
-        public async Task<ActionResult<RequestPackage>> PostRequestPackage(RequestPackage requestPackage)
+        public async Task<ActionResult<Request>> PostRequestPackage(Request requestPackage)
         {
-            _context.RequestPackages.Add(requestPackage);
+            _context.Requests.Add(requestPackage);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRequestPackage", new { id = requestPackage.Id }, requestPackage);
@@ -85,15 +85,15 @@ namespace RecordsManagmentWeb.Controllers
 
         // DELETE: api/Request/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<RequestPackage>> DeleteRequestPackage(int id)
+        public async Task<ActionResult<Request>> DeleteRequestPackage(int id)
         {
-            var requestPackage = await _context.RequestPackages.FindAsync(id);
+            var requestPackage = await _context.Requests.FindAsync(id);
             if (requestPackage == null)
             {
                 return NotFound();
             }
 
-            _context.RequestPackages.Remove(requestPackage);
+            _context.Requests.Remove(requestPackage);
             await _context.SaveChangesAsync();
 
             return requestPackage;
@@ -101,7 +101,7 @@ namespace RecordsManagmentWeb.Controllers
 
         private bool RequestPackageExists(int id)
         {
-            return _context.RequestPackages.Any(e => e.Id == id);
+            return _context.Requests.Any(e => e.Id == id);
         }
     }
 }

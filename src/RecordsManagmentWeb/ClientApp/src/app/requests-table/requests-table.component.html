@@ -1,18 +1,26 @@
 <div class="mat-elevation-z8">
   <table mat-table class="full-width-table" [dataSource]="dataSource" matSort aria-label="Elements">
-    <!-- Id Column -->
+
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
       <td mat-cell *matCellDef="let row">{{row.id}}</td>
     </ng-container>
 
-    <!-- Name Column -->
-    <ng-container matColumnDef="deatilsFileName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Details File</th>
+
+    <ng-container matColumnDef="request">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Request</th>
       <td mat-cell *matCellDef="let row">
         <a href="" (click)="onDetailsLinkCLick(row.deatilsFileName)">{{row.deatilsFileName}}</a>        
       </td>
     </ng-container>
+
+    <ng-container matColumnDef="created">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Created</th>
+      <td mat-cell *matCellDef="let row">
+              
+      </td>
+    </ng-container>
+
 
     <ng-container matColumnDef="recordsLink">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Zip File</th>

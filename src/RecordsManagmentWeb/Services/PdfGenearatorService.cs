@@ -65,7 +65,7 @@ namespace RecordsManagmentWeb.Services
             {
                 await _blobService.SaveFileToBlob(fileName, file);
             }
-            var request = await _db.RequestPackages.FindAsync(requestId);
+            var request = await _db.Requests.FindAsync(requestId);
             request.PdfPackName = fileName;
             await _db.SaveChangesAsync();
         }
@@ -142,7 +142,7 @@ namespace RecordsManagmentWeb.Services
         private async Task<PdfJsonData> GetFileNames(int id)
         {
             Directory.Exists(_tempRecordPath);
-            var requestPack = await _db.RequestPackages.AsNoTracking().FirstOrDefaultAsync(rp => rp.Id == id);
+            var requestPack = await _db.Requests.AsNoTracking().FirstOrDefaultAsync(rp => rp.Id == id);
             if (requestPack.DeatilsFileName == null)
             {
                 return null;
@@ -150,22 +150,20 @@ namespace RecordsManagmentWeb.Services
             var files = new List<PdfItemData>(new[] {
                 new PdfItemData(){FileName = requestPack.DeatilsFileName, InLog=false}
             });
-            IEnumerable<PdfItemData> recordFiles = await _db.RecordFiles
-                                                       .Where(f => f.RequestPackageId == id && f.InScope 
-                                                                && f.Id!=requestPack.DetailsRecordId)
-                                                       .Select(f => new PdfItemData()
-                                                       {
-                                                           FileName = f.FileName,
-                                                           InLog    = f.InLog,
-                                                           Log      = f.InLog ? f.Log : null
-                                                       })
-                                                       .ToListAsync();
+            var recordFiles = await _db.Records.Where(f => f.RequestId == id && f.InScope)
+                                               .Select(f => new PdfItemData
+                                               {
+                                                   FileName = f.FileName,
+                                                   InLog = f.InLog,
+                                                   Log = f.InLog ? f.Log : null
+                                               })
+                                               .ToListAsync();
             files.AddRange(recordFiles);
             var titleData = GetLogTitle(requestPack);
             return new PdfJsonData() { LogItems = files, LogTitle = titleData };
         }
 
-        private IEnumerable<string> GetLogTitle(RequestPackage requestPack)
+        private IEnumerable<string> GetLogTitle(Request requestPack)
         {
             var titleLines = new List<string>();
             titleLines.Add($"Today's Date: {DateTime.Now.ToString("MM/dd/yyyy")}");

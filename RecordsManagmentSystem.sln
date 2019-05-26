@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.136
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B531CE0F-2B92-4C16-87B4-DE9E449E4EBC}"
 EndProject
@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngularWeb", "src\AngularWe
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "PdfGeneratorTs", "src\PdfGeneratorTs\PdfGeneratorTs.njsproj", "{1BF71BB2-75A9-40B2-BE3C-8DC3D392AF92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Tests", "tests\Web.Tests\Web.Tests.csproj", "{15688372-82F8-4BEB-81B1-78E206E8B669}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Tests", "tests\Web.Tests\Web.Tests.csproj", "{15688372-82F8-4BEB-81B1-78E206E8B669}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,11 +92,9 @@ Global
 		{180EC890-6A8A-4315-8458-C00A71357458}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{180EC890-6A8A-4315-8458-C00A71357458}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0A122007-FAD8-41E4-9597-9EF7F87C8119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A122007-FAD8-41E4-9597-9EF7F87C8119}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A122007-FAD8-41E4-9597-9EF7F87C8119}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A122007-FAD8-41E4-9597-9EF7F87C8119}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1BF71BB2-75A9-40B2-BE3C-8DC3D392AF92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1BF71BB2-75A9-40B2-BE3C-8DC3D392AF92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BF71BB2-75A9-40B2-BE3C-8DC3D392AF92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BF71BB2-75A9-40B2-BE3C-8DC3D392AF92}.Release|Any CPU.Build.0 = Release|Any CPU
 		{15688372-82F8-4BEB-81B1-78E206E8B669}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

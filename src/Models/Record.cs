@@ -4,10 +4,11 @@ using System.Text;
 
 namespace Models
 {
-    public class RecordFile
+    public class Record
     {
         public int Id { get; set; }
-        public int RequestPackageId { get; set; }
+        public int RequestId { get; set; }
+        public string RequestNumber { get; set; }
         public string FileName { get; set; }
         public RecordStatusEnum Status { get; set; }
         public bool InScope { get; set; }
@@ -20,7 +21,10 @@ namespace Models
         public DateTime StartDate { get; set; }
         public string Log { get; set; }
         public string Phase { get; set; }
+        public bool Archived { get; set; }
+        public bool Duplicated { get; set; }
 
-        public virtual RequestPackage RequestPackage { get; set; }        
+        public virtual Request Request { get; set; }
+        
     }
 }

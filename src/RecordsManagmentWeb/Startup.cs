@@ -27,6 +27,8 @@ using Microsoft.Extensions.Options;
 using RecordsManagmentWeb.NodeJs;
 using RecordsManagmentWeb.Services;
 using StorageService;
+using RecordsManagmentWeb.Authorization;
+using Hosting = Microsoft.Extensions.Hosting;
 
 namespace RecordsManagmentWeb
 {
@@ -51,6 +53,43 @@ namespace RecordsManagmentWeb
             string ftpLogin     = Configuration["FtpLogin"];
             string ftpPassword  = Configuration["FtpPasword"];
             string processedDir = Configuration["ProcessedDir"];
+            string authority = Configuration["Authentication:Authority"];
+            string appIdUri = Configuration["Authentication:AppIdUri"];
+            string clientId = Configuration["Authentication:ClientId"];
+
+           // services.AddAuthentication(sharedOptions =>
+           // {
+           //     sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+           // })
+           //.AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+           // services.AddAuthorization(o =>
+           // {
+           //     o.AddPolicy("default", policy =>
+           //     {
+           //         // Require the basic "Access app-name" claim by default
+           //         policy.RequireClaim(Constants.ScopeClaimType, "user_impersonation");
+           //     });
+           // });
+
+           // services.AddAuthentication(o =>
+           //{
+           //    o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+           //})
+           //.AddJwtBearer(o =>
+           //{
+           //    o.Authority = authority;
+           //    o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+           //    {
+           //        // Both App ID URI and client id are valid audiences in the access token
+           //        ValidAudiences = new List<string> { appIdUri, clientId }
+           //    };
+           //});
+
+            //services.AddSingleton<IClaimsTransformation, AzureAdScopeClaimTransformation>();
+
 
             services.Configure<NodeOptions>(Configuration.GetSection("NodeOptions"));
             services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(connectionString));
@@ -84,8 +123,9 @@ namespace RecordsManagmentWeb
                 return pdfService;
 
             });
+            services.AddSingleton<Hosting.IHostedService, AppLogic>();
 
-            services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("RequestManagmentDb")));
+            //services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("RequestManagmentDb")));
             ConfugureBasicMvc(services);
             services.AddSpaStaticFiles(configuration =>
             {
@@ -100,11 +140,11 @@ namespace RecordsManagmentWeb
         {
             UseBasicMvc(app, env);
 
-            app.UseHangfireServer();
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions()
-            {
-                Authorization = new[] { new HangfireAuthorization() },
-            });
+            //app.UseHangfireServer();
+            //app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+            //{
+            //    Authorization = new[] { new HangfireAuthorization() },
+            //});
             //RunJob(app, env);
 
             
@@ -140,7 +180,6 @@ namespace RecordsManagmentWeb
             app.UseCookiePolicy();
 
             //app.UseAuthentication();
-
             app
             .UseMvc(routes =>
             {

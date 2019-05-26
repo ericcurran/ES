@@ -6,6 +6,7 @@ using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using DbService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.NodeServices;
@@ -17,7 +18,7 @@ namespace RecordsManagmentWeb.Controllers
     [ApiController]
     public class PackController : ControllerBase
     {
-        [HttpPost("{id}")]        
+        [HttpPost("{id}")]   
         public async Task<IActionResult> Post([FromRoute]int id, [FromServices] PdfGenearatorService pdfService )
         {
             CancellationToken t = new CancellationToken();

@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build-prod":"ng build --prod=true",
+    "build-prod": "ng build --prod=true",
     "build:ssr": "ng run AngularWeb:server:dev",
     "test": "ng test",
     "lint": "ng lint",
@@ -29,7 +29,7 @@
     "aspnet-prerendering": "^3.0.1",
     "core-js": "^2.6.1",
     "hammerjs": "^2.0.8",
-    "microsoft-adal-angular6": "^1.1.0",
+    "microsoft-adal-angular6": "1.3.0",
     "popper.js": "^1.14.6",
     "rxjs": "^6.3.3",
     "zone.js": "^0.8.26"

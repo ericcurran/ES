@@ -1,121 +1,172 @@
 ﻿using DbService;
 using FtpService;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Models;
 using StorageService;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Timers = System.Timers;
 
 namespace BusinessLogic
 {
-    public class AppLogic
+    public class AppLogic: IHostedService
     {
-        private readonly DataService _db;
-        private readonly BlobStorageService _bs;
-        private readonly FtpClient _ftpClient;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<AppLogic> _log;
+        private readonly Timers.Timer _timerToStartJob;
 
-        public AppLogic(DataService db, BlobStorageService bs, FtpClient ftpClient, ILogger<AppLogic> log)
+        private bool _jobRunning;
+        private DataService _db;
+        private BlobStorageService _bs;
+        private FtpClient _ftpClient;
+
+        public AppLogic(IServiceProvider serviceProvider, ILogger<AppLogic> log)
         {
-            _db = db;
-            _bs = bs;
-            _ftpClient = ftpClient;
+            _serviceProvider = serviceProvider;          
             _log = log;
+
+            _timerToStartJob = new Timers.Timer
+            {
+                AutoReset = true,
+                Interval = 30 * 1000 //TimeSpan.FromMinutes(5).TotalMilliseconds
+            };
+            _timerToStartJob.Elapsed += ProccessFilesTimedEvent;
         }
 
         public async Task Run()
         {
-            _log.LogInformation($"Job started!");
-
-            var newZipFileName = await GetZipFileList();
-            
-            foreach (var zip in newZipFileName)
+            _jobRunning = true;
+            using (var scope = _serviceProvider.CreateScope())
             {
-                _log.LogInformation($"Start processing file {zip.ZipFileName}");
-                
-                var downloadedFile = await DownloadfromFtp(zip);
-                if (downloadedFile == null)
+                _db = scope.ServiceProvider.GetService<DataService>();
+                _bs = scope.ServiceProvider.GetService<BlobStorageService>();
+                _ftpClient = scope.ServiceProvider.GetService<FtpClient>();
+
+                _log.LogInformation($"Job started!");
+
+                var requests = await GetZipFileList();
+
+                foreach (var request in requests)
                 {
-                    continue;
+                    _log.LogInformation($"Start processing file {request.GetZipFileName()}");
+
+                    var downloadedFile = await DownloadfromFtp(request.GetZipFileName());
+                    if (downloadedFile == null)
+                    {
+                        continue;
+                    }
+
+                    var zipEntires = await GetZipEntries(downloadedFile);
+                    var sameClaimFileNames = await _db.GetFileNamesByClaimNumber(request.ClaimNumber);
+                    var savedRecords = await SaveToBlob(zipEntires, request.Id, sameClaimFileNames);
+                    await SaveRecordAndUpdateRequest(savedRecords);
+
+                    await CleanFtp(request);
+                    _log.LogInformation($"Finished processing file {request.GetZipFileName()}");
                 }
 
-                var zipEntires = await GetZipEntries(downloadedFile);
-                                
-                var savedRecords = await SaveToBlob(zipEntires, zip.Id);
-                await SaveRecordAndUpdateRequest(savedRecords);
-
-                await CleanFtp(zip);
-                _log.LogInformation($"Finished processing file {zip.ZipFileName}");
-            }
-
                 _log.LogInformation($"Job ended!");
+
+            }
+            _jobRunning = false;
+            _db = null;
+            _bs = null;
+            _ftpClient = null;
         }
 
-        private async Task<List<RecordFile>> SaveToBlob(IEnumerable<ZipEntryModel> records, int zipId)
+        private async Task<List<Record>> SaveToBlob(IEnumerable<ZipEntryModel> records, int requestId, IEnumerable<string> sameClaimFileNames)
         {
 
-            var savedRecords = new List<RecordFile>();
+            var savedRecords = new List<Record>();
             var savedTasks = new List<Task<string>>();
-            Task whenAllTask = null;
+            Task whenAllTask;
             foreach (var record in records)
             {
+                if (sameClaimFileNames.Contains(record.FileName))
+                {
+                    AddRecordToSave(requestId, savedRecords, record.FileName, true);
+                    continue;
+                }
                 var task = _bs.SaveFileToBlob(record.FileName, record.FileStrem);
                 savedTasks.Add(task);
                 if (savedTasks.Count == 50)
                 {
                     whenAllTask = Task.WhenAll(savedTasks);
                     await whenAllTask;
-                    AddFileRecords(zipId, savedRecords, savedTasks);
+                    AddFileRecords(requestId, savedRecords, savedTasks);
                     savedTasks.Clear();
                 }
             }
             if (savedTasks.Count > 0)
             {
                 await Task.WhenAll(savedTasks);
-                AddFileRecords(zipId, savedRecords, savedTasks);
+                AddFileRecords(requestId, savedRecords, savedTasks);
             }
             return savedRecords;
         }
 
-        private void AddFileRecords(int zipId, List<RecordFile> savedRecords, List<Task<string>> savedTasks)
+        private void AddFileRecords(int requestId, List<Record> savedRecords, List<Task<string>> savedTasks)
         {
             foreach (var t in savedTasks)
             {
-                var fileName = new RecordFileName(t.Result);
-                var recordFile = new RecordFile();
-                recordFile.FileName = t.Result;
-                recordFile.RequestPackageId = zipId;
-                recordFile.ClaimNumber = fileName.ClaimNumber;
-                recordFile.BundleNumber = fileName.BundleNumber;
-                recordFile.PageNumber = fileName.PageNumber;
-                recordFile.OrderNumber = fileName.OrderNumber;
-
-
-                savedRecords.Add(recordFile);
+                AddRecordToSave(requestId, savedRecords, t.Result);
             }
         }
 
-        public async Task<List<RequestPackage>> GetZipFileList()
+        private static void AddRecordToSave(int requestId, List<Record> savedRecords, string fileName, bool isDuplicate=false)
+        {
+            var fileNameData = new RecordFileName(fileName);
+            var recordFile = new Record();
+            recordFile.FileName = fileName;
+            recordFile.RequestId = requestId;
+            recordFile.ClaimNumber = fileNameData.ClaimNumber;
+            recordFile.BundleNumber = fileNameData.BundleNumber;
+            recordFile.PageNumber = fileNameData.PageNumber;
+            recordFile.OrderNumber = fileNameData.OrderNumber;
+            recordFile.Status = RecordStatusEnum.SavedToAzure;
+            recordFile.Duplicated = isDuplicate;
+            savedRecords.Add(recordFile);
+        }
+
+        public async Task<List<Request>> GetZipFileList()
         {
             string[] fileNames = await _ftpClient.GetFileList();
             var zipFiles       = fileNames.Where(name => name.EndsWith(".zip"));
             _log.LogInformation($"Found {zipFiles.Count()} zip files");
-            var newZipFIles    = await _db.SaveNewRequests(zipFiles);
+
+            var requests = zipFiles
+                .Select(GetClaimNumAndRequestId)
+                .Select(fileData => new Request
+                {
+                    ClaimNumber = fileData.claimNumber,
+                    RequestId = fileData.requestId,
+                    Type = RequestTypeEnum.Peer
+                });
+            var newZipFIles    = await _db.SaveNewRequests(requests);
             _log.LogInformation($"Info about {newZipFIles.Count()} zip files saved to database");
             return newZipFIles.ToList();
         }
 
-        public async Task<Stream> DownloadfromFtp(RequestPackage request)
+        private (string claimNumber, string requestId) GetClaimNumAndRequestId(string fileName)
         {
-            Stream downloadedFile = await _ftpClient.ReadFile(request.ZipFileName);
+            var fn = fileName.Substring(0, fileName.Length - 4);
+            var data = fn.Split('_');
+            return (data[0], data[1]);
+        }
+
+        public async Task<Stream> DownloadfromFtp(string zipFileName)
+        {
+            Stream downloadedFile = await _ftpClient.ReadFile(zipFileName);
             return downloadedFile;
         }
 
-        public async Task SaveRecordAndUpdateRequest(IEnumerable<RecordFile> records)
+        public async Task SaveRecordAndUpdateRequest(IEnumerable<Record> records)
         {
            await _db.SaveNewRecordAndUpdaterequest(records);            
         }
@@ -125,11 +176,29 @@ namespace BusinessLogic
             return await ZipServcie.UnzipFile(downloadedFile);
         }
 
-        public  async Task CleanFtp(RequestPackage zipFile)
+        public  async Task CleanFtp(Request request)
         {
-            await _ftpClient.MoveFileToProcessed(zipFile.ZipFileName);
-            await _db.UpdateRequestPackagetoStatus(zipFile.Id, RequestStatusEnum.SavedToBlob);
+            await _ftpClient.MoveFileToProcessed(request.GetZipFileName());
+            await _db.UpdateRequestPackagetoStatus(request.Id, RequestStatusEnum.SavedToAzure);
         }
 
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            _timerToStartJob.Enabled = true;
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            _timerToStartJob.Enabled = false;
+        }
+
+        private async void ProccessFilesTimedEvent(object sender, Timers.ElapsedEventArgs e)
+        {
+            if (_jobRunning)
+            {            
+                return;
+            }
+            await Task.WhenAll(Run());
+        }
     }
 }

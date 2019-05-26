@@ -9,21 +9,11 @@ namespace DbService
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions) : base(dbContextOptions)
         {
         }
+      
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<PdfPack>()
-               .HasOne(p => p.RequestPackage)
-               .WithOne(p => p.PdfPack)
-               .HasForeignKey<PdfPack>(p=>p.Id);
-                
-        }
+        public DbSet<Request> Requests { get; set; }
 
-        public DbSet<RequestPackage> RequestPackages { get; set; }
-
-        public DbSet<RecordFile> RecordFiles { get; set; }
-
-        public DbSet<PdfPack> PdfPacks { get; set; }
+        public DbSet<Record> Records { get; set; }        
     }
 
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>

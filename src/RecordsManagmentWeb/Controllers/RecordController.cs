@@ -26,10 +26,10 @@ namespace RecordsManagmentWeb.Controllers
         public async Task<ActionResult> GetRecordFiles(int requestId, 
             string sortDir, int page, int size)
         {
-            var data = _context.RecordFiles.AsNoTracking();
+            var data = _context.Records.AsNoTracking();
             if (requestId > 0)
             {
-                data = data.Where(r => r.RequestPackageId == requestId);
+                data = data.Where(r => r.RequestId == requestId);
             }
             int count = await data.CountAsync();
             switch (sortDir)
@@ -53,9 +53,9 @@ namespace RecordsManagmentWeb.Controllers
 
         // GET: api/Record/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RecordFile>> GetRecordFile(int id)
+        public async Task<ActionResult<Record>> GetRecordFile(int id)
         {
-            var recordFile = await _context.RecordFiles.FindAsync(id);
+            var recordFile = await _context.Records.FindAsync(id);
 
             if (recordFile == null)
             {
@@ -67,7 +67,7 @@ namespace RecordsManagmentWeb.Controllers
 
         // PUT: api/Record/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRecordFile(int id, RecordFile recordFile)
+        public async Task<IActionResult> PutRecordFile(int id, Record recordFile)
         {
             if (id != recordFile.Id)
             {
@@ -97,9 +97,9 @@ namespace RecordsManagmentWeb.Controllers
 
         // POST: api/Record
         [HttpPost]
-        public async Task<ActionResult<RecordFile>> PostRecordFile(RecordFile recordFile)
+        public async Task<ActionResult<Record>> PostRecordFile(Record recordFile)
         {
-            _context.RecordFiles.Add(recordFile);
+            _context.Records.Add(recordFile);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRecordFile", new { id = recordFile.Id }, recordFile);
@@ -107,15 +107,15 @@ namespace RecordsManagmentWeb.Controllers
 
         // DELETE: api/Record/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<RecordFile>> DeleteRecordFile(int id)
+        public async Task<ActionResult<Record>> DeleteRecordFile(int id)
         {
-            var recordFile = await _context.RecordFiles.FindAsync(id);
+            var recordFile = await _context.Records.FindAsync(id);
             if (recordFile == null)
             {
                 return NotFound();
             }
 
-            _context.RecordFiles.Remove(recordFile);
+            _context.Records.Remove(recordFile);
             await _context.SaveChangesAsync();
 
             return recordFile;
@@ -123,7 +123,7 @@ namespace RecordsManagmentWeb.Controllers
 
         private bool RecordFileExists(int id)
         {
-            return _context.RecordFiles.Any(e => e.Id == id);
+            return _context.Records.Any(e => e.Id == id);
         }
     }
 }

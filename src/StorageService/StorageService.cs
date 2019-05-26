@@ -11,8 +11,6 @@ namespace StorageService
 {
     public class BlobStorageService
     {
-        private static readonly string storageConnectionString;
-        private static readonly string blobContainer;
         private readonly ILogger<BlobStorageService> _log;
         private static CloudStorageAccount storageAccount;
         private static CloudBlobClient cloudBlobClient;
@@ -75,14 +73,14 @@ namespace StorageService
             CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(localFileName);
             _log.LogInformation($"file {localFileName} started to save in blob");
             var context = new OperationContext();
-            var status = RecordStatusEnum.SavedToBlobStorage;
+            var status = RecordStatusEnum.SavedToAzure;
             context.RequestCompleted += (sender, arg) => {
                 _log.LogInformation(arg.RequestInformation.HttpStatusMessage);
                 if (!string.IsNullOrEmpty(arg.RequestInformation.ErrorCode))
                 {
                     _log.LogError(arg.RequestInformation.ErrorCode);
                     _log.LogError(arg.RequestInformation.Exception.Message);
-                    status = RecordStatusEnum.NotSavedToBlob;
+                    status = RecordStatusEnum.SavedToAzure;
                 }
             };
             

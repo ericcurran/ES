@@ -9,7 +9,7 @@ export const environment = {
   azureAdClientId: 'cee2d7b1-2c63-4343-8272-d72c22e40caa',
   webApiEndpoint:'http://localhost:4200',
   endpoints: {
-    'http://localhost:4200': '10204d32-ea7b-4608-81eb-e35ff52d4428' //API Client Id
+    'api': '5c701f44-fdc9-49f2-a4da-5fa8777a0db0' //API Client Id
   }
 };
 

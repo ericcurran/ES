@@ -31,7 +31,7 @@ namespace BusinessLogic.Tests
             var log = GetLogger<AppLogic>();
 
             var storage = GetBlobStorage();
-            var logic = new AppLogic(ds, storage, ftpService, log);
+            var logic = new AppLogic(null, log);
 
             await logic.Run();
         }
@@ -46,9 +46,9 @@ namespace BusinessLogic.Tests
 
         private FtpClient GetFtpClient()
         {
-            string url = "ftp://waws-prod-am2-165.ftp.azurewebsites.windows.net/site/test";
-            string login = @"renderhubserver\RenderHubAdmin";
-            string psw = @"7j9u*@jyB29729S9";
+            string url = "ftp://waws-prod-dm1-087.ftp.azurewebsites.windows.net/Requests";
+            string login = @"recordsmanagement-sys\$recordsmanagement-sys";
+            string psw = @"m39raZmmQYubJkj6gKfiz0ipeqJAyftaTWlCGt8DKdewkFchxggKcFQClltm";
             string dir = "processed";
             var logger = GetLogger<FtpClient>();
             var ftp = new FtpClient(url, login, psw, dir, logger);

@@ -2,7 +2,9 @@
 {
     public enum RecordStatusEnum
     {
-        SavedToBlobStorage = 1,
-        NotSavedToBlob = 2
+        SavedToAzure = 1,
+        Captured = 2,
+        Pending = 3,
+        Approved = 4
     }
 }

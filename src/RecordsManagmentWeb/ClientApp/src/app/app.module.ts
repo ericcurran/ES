@@ -14,7 +14,7 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule,
          MatListModule, MatTableModule, MatPaginatorModule, MatSortModule,
          MatGridListModule, MatCardModule, MatMenuModule, MatCheckboxModule,
-         MatInputModule, MatOptionModule, MatSelectModule, MatRadioModule, 
+         MatInputModule, MatOptionModule, MatSelectModule, MatRadioModule,
          MatDatepickerModule, MatNativeDateModule} from '@angular/material';
 
 import { RequestsTableComponent } from './requests-table/requests-table.component';
@@ -52,11 +52,11 @@ import { RequestComponent } from './requests-table/request/request.component';
       cacheLocation: 'localStorage',
     }),
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AuthenticationGuard] },
-      { path: 'requests', component: RequestsTableComponent, pathMatch: 'full', canActivate: [AuthenticationGuard] },
-      { path: 'records', component: RecordsTableComponent , canActivate: [AuthenticationGuard]},
-      { path: 'request/:id', component: RequestComponent , canActivate: [AuthenticationGuard]},
-      { path: 'record/:id', component: RecordComponent , canActivate: [AuthenticationGuard]},
+      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [] },
+      { path: 'requests', component: RequestsTableComponent, pathMatch: 'full', canActivate: [] },
+      { path: 'records', component: RecordsTableComponent , canActivate: []},
+      { path: 'request/:id', component: RequestComponent , canActivate: []},
+      { path: 'record/:id', component: RecordComponent , canActivate: []},
     ]),
     LayoutModule,
     MatToolbarModule,
@@ -73,7 +73,7 @@ import { RequestComponent } from './requests-table/request/request.component';
     MatCheckboxModule,
     MatInputModule,
     MatOptionModule,
-    MatSelectModule, 
+    MatSelectModule,
     MatRadioModule,
     MatDatepickerModule,
     MatNativeDateModule

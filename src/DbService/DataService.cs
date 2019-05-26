@@ -20,23 +20,14 @@ namespace DbService
             _log = logger;
         }
 
-        public async Task<IEnumerable<RequestPackage>> SaveNewRequests(IEnumerable<string> fileNames)
+        public async Task<IEnumerable<Request>> SaveNewRequests(IEnumerable<Request> requests)
         {
             try
             {
-                var requests = fileNames.Select(fileName => new RequestPackage()
-                {
-                    ZipFileName = fileName,
-                    Status = RequestStatusEnum.New
-                }).ToList();
-
                 using (var db = GetDbContext())
                 {
-                    foreach (var r in requests)
-                    {
-                        var e = db.RequestPackages.Add(r);
-                        await db.SaveChangesAsync();
-                    }
+                    db.Requests.AddRange(requests);
+                    await db.SaveChangesAsync();
                 }
 
                 return requests;
@@ -49,25 +40,17 @@ namespace DbService
             }
         }
 
-        public async Task SaveNewRecordAndUpdaterequest(IEnumerable<RecordFile> records)
+        public async Task SaveNewRecordAndUpdaterequest(IEnumerable<Record> records)
         {
             try
             {
+                var detailsFile = records.FirstOrDefault(r=> r.FileName.EndsWith("_1-0.pdf"));
                 using (var db = GetDbContext())
                 {
-                    db.RecordFiles.AddRange(records);
+                    db.Records.AddRange(records.Where(r=>r.Id!=detailsFile.Id));
+                    var request = await db.Requests.FindAsync(detailsFile.RequestId);
+                    request.DeatilsFileName = detailsFile.FileName;                            
                     await db.SaveChangesAsync();
-                    foreach (var record in records)
-                    {
-                        if (record.FileName.EndsWith(".pdf"))
-                        {
-                            var request = await db.RequestPackages.FindAsync(record.RequestPackageId);
-                            request.DeatilsFileName = record.FileName;
-                            request.DetailsRecordId = record.Id;
-                            request.ClaimNumber = record.ClaimNumber;
-                            await db.SaveChangesAsync();
-                        }
-                    }
                 }
             }
             catch (Exception e)
@@ -78,11 +61,23 @@ namespace DbService
             }
         }
 
+        public async Task<IEnumerable<string>> GetFileNamesByClaimNumber(string claimNumber)
+        {
+            using (var db = GetDbContext())
+            {
+                return await db.Records.AsNoTracking()
+                    .Where(r => r.ClaimNumber == claimNumber)
+                    .Select(r => r.FileName)
+                    .ToListAsync();
+
+            }
+        }
+
         public async Task UpdateRequestPackagetoStatus(int requestId, RequestStatusEnum status)
         {
             using (var db = GetDbContext())
             {
-                var request = await db.RequestPackages.FindAsync(requestId);
+                var request = await db.Requests.FindAsync(requestId);
                 if (request != null)
                 {
                     request.Status = status;

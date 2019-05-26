@@ -14,7 +14,7 @@ export class RequestsTableComponent implements OnInit {
   dataSource: RequestsTableDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['deatilsFileName', 'status', 'esRef',
+  displayedColumns = ['request', 'created', 'status', 'esRef',
     'claimNumber', 'insuredName', 'dateOfLoss', 'dateOfService', 'phase', 'requestPack', 'pdfPackName', 'open', 'recordsLink'];
 
   constructor(private http: AppHttpService) {

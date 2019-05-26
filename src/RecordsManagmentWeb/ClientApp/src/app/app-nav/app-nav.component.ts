@@ -3,6 +3,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppHttpService } from '../app-http.service';
+import { MsAdalAngular6Service } from 'microsoft-adal-angular6';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav',
@@ -16,13 +18,17 @@ export class AppNavComponent {
       map(result => result.matches)
     );
 
-  constructor(private breakpointObserver: BreakpointObserver, private http: AppHttpService) {}
+  constructor(private breakpointObserver: BreakpointObserver, private http: AppHttpService,
+    private adal: MsAdalAngular6Service, private router: Router) {}
 
   onTestClick() {
     this.http.testNodeService()
-    .subscribe(() => {
-      
-    });
+      .subscribe(() => {});
+  }
+
+  onLogoutClick() {
+    this.adal.logout();
+    this.router.navigate(['/']);
   }
 
 }
