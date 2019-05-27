@@ -34,7 +34,7 @@ namespace BusinessLogic
             _timerToStartJob = new Timers.Timer
             {
                 AutoReset = true,
-                Interval = 30 * 1000 //TimeSpan.FromMinutes(5).TotalMilliseconds
+                Interval = TimeSpan.FromMinutes(5).TotalMilliseconds
             };
             _timerToStartJob.Elapsed += ProccessFilesTimedEvent;
         }
@@ -84,20 +84,22 @@ namespace BusinessLogic
         {
 
             var savedRecords = new List<Record>();
-            var savedTasks = new List<Task<string>>();
+            var savedTasks = new List<(Task<string> task, bool isDuplicated, string originFileName)>();
             Task whenAllTask;
             foreach (var record in records)
             {
+                var isDuplicated = false;
+                var originFileName = record.FileName;
                 if (sameClaimFileNames.Contains(record.FileName))
                 {
-                    AddRecordToSave(requestId, savedRecords, record.FileName, true);
-                    continue;
+                    record.FileName = GetUniqueFileName(record.FileName);
+                    isDuplicated = true;
                 }
                 var task = _bs.SaveFileToBlob(record.FileName, record.FileStrem);
-                savedTasks.Add(task);
+                savedTasks.Add((task, isDuplicated, originFileName));
                 if (savedTasks.Count == 50)
                 {
-                    whenAllTask = Task.WhenAll(savedTasks);
+                    whenAllTask = Task.WhenAll(savedTasks.Select(d=>d.task));
                     await whenAllTask;
                     AddFileRecords(requestId, savedRecords, savedTasks);
                     savedTasks.Clear();
@@ -105,23 +107,36 @@ namespace BusinessLogic
             }
             if (savedTasks.Count > 0)
             {
-                await Task.WhenAll(savedTasks);
+                await Task.WhenAll(savedTasks.Select(d => d.task));
                 AddFileRecords(requestId, savedRecords, savedTasks);
             }
             return savedRecords;
         }
 
-        private void AddFileRecords(int requestId, List<Record> savedRecords, List<Task<string>> savedTasks)
+        private string GetUniqueFileName(string fileName)
+        {
+            if(fileName.EndsWith("_1-0.pdf"))
+            {
+                var substring = fileName.Substring(0, fileName.Length - 8);
+                return $"{substring}_{DateTime.Now.Ticks}_1-0.pdf";
+            }
+            var data = fileName.Split('.');
+            return $"{data}_{DateTime.Now.Ticks}.{data[1]}";
+        }
+
+        private void AddFileRecords(int requestId, 
+                                    List<Record> savedRecords, 
+                                    List<(Task<string> task, bool isDuplicated, string orignalFileName)> savedTasks)
         {
             foreach (var t in savedTasks)
             {
-                AddRecordToSave(requestId, savedRecords, t.Result);
+                AddRecordToSave(requestId, savedRecords, t.task.Result, t.isDuplicated, t.orignalFileName);
             }
         }
 
-        private static void AddRecordToSave(int requestId, List<Record> savedRecords, string fileName, bool isDuplicate=false)
+        private static void AddRecordToSave(int requestId, List<Record> savedRecords, string fileName, bool isDuplicate, string originalFileName)
         {
-            var fileNameData = new RecordFileName(fileName);
+            var fileNameData = new RecordFileName(originalFileName);
             var recordFile = new Record();
             recordFile.FileName = fileName;
             recordFile.RequestId = requestId;
@@ -145,9 +160,10 @@ namespace BusinessLogic
                 .Select(fileData => new Request
                 {
                     ClaimNumber = fileData.claimNumber,
-                    RequestId = fileData.requestId,
-                    Type = RequestTypeEnum.Peer
-                });
+                    RequestId   = fileData.requestId,
+                    Type        = RequestTypeEnum.Peer,
+                    Created     = DateTime.Now,
+                }).ToList();
             var newZipFIles    = await _db.SaveNewRequests(requests);
             _log.LogInformation($"Info about {newZipFIles.Count()} zip files saved to database");
             return newZipFIles.ToList();

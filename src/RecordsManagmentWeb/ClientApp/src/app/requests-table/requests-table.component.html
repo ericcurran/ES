@@ -21,23 +21,63 @@
       </td>
     </ng-container>
 
-
-    <ng-container matColumnDef="recordsLink">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Zip File</th>
-      <td mat-cell *matCellDef="let row">
-        <a [routerLink]="[ '/records', {id:row.id} ]">Records</a>        
-      </td>
+    <ng-container matColumnDef="esRef">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Ref Number</th>
+      <td mat-cell *matCellDef="let row">{{row.esRef}}</td>
     </ng-container>
 
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-      <td mat-cell *matCellDef="let row">{{row.status}}</td>
+      <td mat-cell *matCellDef="let row">{{dataSource.getRequestStatus(row.status)}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="requestId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Request Id</th>
+      <td mat-cell *matCellDef="let row">{{row.requestId}}</td>
+    </ng-container>
 
-    <ng-container matColumnDef="esRef">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Ref Number</th>
-      <td mat-cell *matCellDef="let row">{{row.esRef}}</td>
+    <ng-container matColumnDef="claimNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Claim Num</th>
+      <td mat-cell *matCellDef="let row">{{row.claimNumber}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="insured">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Insured</th>
+      <td mat-cell *matCellDef="let row">{{row.insuredName}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateOfLoss">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Loss</th>
+      <td mat-cell *matCellDef="let row">{{dataSource.formatDate(row.dateOfLoss)}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateOfService">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Service</th>
+      <td mat-cell *matCellDef="let row">{{dataSource.formatDate(row.dateOfService)}}</td>
+    </ng-container>
+    
+    <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
+      <td mat-cell *matCellDef="let row">{{row.amount}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="phase">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Phase</th>
+      <td mat-cell *matCellDef="let row">{{row.phase}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="requestPack">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Request Pack</th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-button (click)="onGenerateClick(row.id)" >Generate pack</button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pdfPackName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Ready pack</th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-button (click)="onGetPdfPack(row.pdfPackName)" *ngIf="row.pdfPackName">Download</button>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="open">
@@ -47,41 +87,12 @@
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="requestPack">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Request Pack</th>
-        <td mat-cell *matCellDef="let row">
-          <button mat-button (click)="onGenerateClick(row.id)" >Generate pack</button>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="pdfPackName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Ready pack</th>
-        <td mat-cell *matCellDef="let row">
-          <button mat-button (click)="onGetPdfPack(row.pdfPackName)" *ngIf="row.pdfPackName">Download</button>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="claimNumber">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Claim Num</th>
-        <td mat-cell *matCellDef="let row">{{row.claimNumber}}</td>
-      </ng-container>
-      <ng-container matColumnDef="dateOfLoss">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Loss</th>
-        <td mat-cell *matCellDef="let row">{{row.dateOfLoss}}</td>
-      </ng-container>
-      <ng-container matColumnDef="dateOfService">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Service</th>
-        <td mat-cell *matCellDef="let row">{{row.dateOfService}}</td>
-      </ng-container>
-      <ng-container matColumnDef="insuredName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Insured Name</th>
-        <td mat-cell *matCellDef="let row">{{row.insuredName}}</td>
-      </ng-container>
-      <ng-container matColumnDef="phase">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Phase</th>
-        <td mat-cell *matCellDef="let row">{{row.phase}}</td>
-      </ng-container>
-
+    <ng-container matColumnDef="recordsLink">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Zip File</th>
+      <td mat-cell *matCellDef="let row">
+        <a [routerLink]="[ '/records', {id:row.id} ]">Records</a>        
+      </td>
+    </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

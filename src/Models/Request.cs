@@ -9,6 +9,8 @@ namespace Models
         public RequestTypeEnum Type { get; set; }
         public string ClaimNumber { get; set; }
         public string InsuredName { get; set; }
+        public DateTime Created { get; set; }
+        public decimal Amount { get; set; }
         public DateTime DateOfLoss { get; set; }
         public DateTime DateOfService { get; set; }
         public string Phase { get; set; }

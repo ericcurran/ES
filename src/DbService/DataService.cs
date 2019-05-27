@@ -26,7 +26,7 @@ namespace DbService
             {
                 using (var db = GetDbContext())
                 {
-                    db.Requests.AddRange(requests);
+                    await db.Requests.AddRangeAsync(requests);
                     await db.SaveChangesAsync();
                 }
 
@@ -45,9 +45,11 @@ namespace DbService
             try
             {
                 var detailsFile = records.FirstOrDefault(r=> r.FileName.EndsWith("_1-0.pdf"));
+                var recordsList = records.ToList();
+                var removed = recordsList.Remove(detailsFile);
                 using (var db = GetDbContext())
                 {
-                    db.Records.AddRange(records.Where(r=>r.Id!=detailsFile.Id));
+                    await db.Records.AddRangeAsync(recordsList);
                     var request = await db.Requests.FindAsync(detailsFile.RequestId);
                     request.DeatilsFileName = detailsFile.FileName;                            
                     await db.SaveChangesAsync();
