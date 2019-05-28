@@ -7,48 +7,71 @@
       <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <input matInput placeholder="Es Ref Number" formControlName="esRef">
+            <input matInput placeholder="Request" formControlName="deatilsFileName">
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Request ID" formControlName="requestId">
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Claim Number" formControlName="claimNumber">
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Created" formControlName="created">
           </mat-form-field>
         </div>
       </div>
       <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <mat-select placeholder="Status" formControlName="status">
-              <mat-option *ngFor="let s of statuses" [value]="s.v">
-                {{s.t}}
-              </mat-option>
-            </mat-select>            
+            <input matInput placeholder="Es Ref Number" formControlName="esRef">
           </mat-form-field>
         </div>
-      </div>
-      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Status" formControlName="status">
+              <mat-option *ngFor="let s of statuses" [value]="s.value">
+                {{s.text}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
         <div class="col">
           <mat-form-field class="full-width">
             <input matInput placeholder="Phase" formControlName="phase">
           </mat-form-field>
         </div>
+      </div>
+      <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
             <input matInput placeholder="Insured Name" formControlName="insuredName">
           </mat-form-field>
         </div>
-      </div>
-      <div class="row">
         <div class="col">
-           <mat-form-field>
-              <input matInput [matDatepicker]="picker1" placeholder="Choose a date" formControlName="dateOfLoss">
-              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-              <mat-datepicker #picker1></mat-datepicker>
-            </mat-form-field>
+          <mat-form-field>
+            <input matInput [matDatepicker]="picker1" placeholder="Date Of Loss" formControlName="dateOfLoss">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
         </div>
         <div class="col">
           <mat-form-field>
-             <input matInput [matDatepicker]="picker2" placeholder="Choose a date" formControlName="dateOfService">
-             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-             <mat-datepicker #picker2></mat-datepicker>
-           </mat-form-field>
-       </div>
+            <input matInput [matDatepicker]="picker2" placeholder="Date of service" formControlName="dateOfService">
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col">
+            <mat-form-field class="full-width">
+              <input matInput type="number" placeholder="Amount" formControlName="amount">
+            </mat-form-field>
+          </div>
       </div>
     </mat-card-content>
     <mat-card-actions>

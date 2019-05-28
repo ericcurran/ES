@@ -11,8 +11,8 @@ namespace Models
         public string InsuredName { get; set; }
         public DateTime Created { get; set; }
         public decimal Amount { get; set; }
-        public DateTime DateOfLoss { get; set; }
-        public DateTime DateOfService { get; set; }
+        public DateTime? DateOfLoss { get; set; }
+        public DateTime? DateOfService { get; set; }
         public string Phase { get; set; }
         public string DeatilsFileName { get; set; }        
         public string PdfPackName { get; set; }

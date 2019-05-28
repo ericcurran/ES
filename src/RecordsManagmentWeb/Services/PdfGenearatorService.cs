@@ -169,8 +169,8 @@ namespace RecordsManagmentWeb.Services
             titleLines.Add($"Today's Date: {DateTime.Now.ToString("MM/dd/yyyy")}");
             titleLines.Add($"Claimant's Date: {requestPack.InsuredName ?? "Not Defiend"}");
             titleLines.Add($"Claim Number: {requestPack.ClaimNumber ?? "Not Defiend"}");
-            titleLines.Add($"Date of Accident: {requestPack.DateOfLoss.ToString("MM/dd/yyyy")}");
-            titleLines.Add($"Date(s) of Service: {requestPack.DateOfService.ToString("MM/dd/yyyy")}");
+            titleLines.Add($"Date of Accident: {requestPack.DateOfLoss?.ToString("MM/dd/yyyy") ?? ""}");
+            titleLines.Add($"Date(s) of Service: {requestPack.DateOfService?.ToString("MM/dd/yyyy") ?? ""}");
             titleLines.Add("Undated, Procedure consent formsigned by claimant");
             return titleLines;            
         }

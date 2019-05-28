@@ -15,8 +15,8 @@ import { MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule,
          MatListModule, MatTableModule, MatPaginatorModule, MatSortModule,
          MatGridListModule, MatCardModule, MatMenuModule, MatCheckboxModule,
          MatInputModule, MatOptionModule, MatSelectModule, MatRadioModule,
-         MatDatepickerModule, MatNativeDateModule} from '@angular/material';
-
+         MatDatepickerModule } from '@angular/material';
+import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { RequestsTableComponent } from './requests-table/requests-table.component';
 import { RecordsTableComponent } from './records-table/records-table.component';
 import { HomeComponent } from './home/home.component';
@@ -76,14 +76,15 @@ import { RequestComponent } from './requests-table/request/request.component';
     MatSelectModule,
     MatRadioModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatMomentDateModule
   ],
   providers: [AuthenticationGuard, AppHttpService, TokenInterceptor,
     {
       provide: HTTP_INTERCEPTORS,
       useExisting: TokenInterceptor,
       multi: true
-    }
+    },
+    {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true }}
   ],
   bootstrap: [AppComponent]
 })

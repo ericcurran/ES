@@ -4,7 +4,6 @@ import { map, catchError, finalize } from 'rxjs/operators';
 import { Observable, of as observableOf, merge, BehaviorSubject, of } from 'rxjs';
 import { AppHttpService } from '../app-http.service';
 import { RequestDoc } from './request';
-import * as moment from 'moment';
 
 // TODO: Replace this with your own data model type
 export interface RequestsTableItem {
@@ -22,23 +21,6 @@ export class RequestsTableDataSource extends DataSource<RequestDoc> {
 
   private requestsData = new BehaviorSubject<RequestDoc[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
-
-  private statuses = [
-    { value: 1, text: 'Saved to Azure' },
-    { value: 2, text: 'Captured' },
-    { value: 3, text: 'Pending' },
-    { value: 4, text: 'Approved' }
-  ];
-
-  private types = [
-    { value: 1, text: 'Peer' },
-    { value: 2, text: 'TBD' },
-    { value: 3, text: 'IME' },
-    { value: 4, text: 'IMEO' },
-    { value: 5, text: 'Fee' },
-    { value: 6, text: 'Feep' },
-    { value: 7, text: 'Court' }
-  ];
 
   constructor(private paginator: MatPaginator, private sort: MatSort, private http: AppHttpService) {
     super();
@@ -59,20 +41,6 @@ export class RequestsTableDataSource extends DataSource<RequestDoc> {
    * any open connections or free any held resources that were set up during connect.
    */
   disconnect() {}
-
-  getRequestStatus(value: number) {
-    const data = this.statuses.find(d => d.value === value);
-    return data ? data.text : 'Unknown';
-  }
-
-  getRequestType(value: number) {
-    const data = this.types.find(d => d.value === value);
-    return data ? data.text : 'Unknown';
-  }
-
-  formatDate(isoString: string) {
-    return moment(isoString).format('MM/DD/YYYY');
-  }
 
   private loadRequest() {
 

@@ -16,9 +16,7 @@
 
     <ng-container matColumnDef="created">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Created</th>
-      <td mat-cell *matCellDef="let row">
-              
-      </td>
+      <td mat-cell *matCellDef="let row">{{helper.formatDate(row.created)}} </td>
     </ng-container>
 
     <ng-container matColumnDef="esRef">
@@ -28,7 +26,7 @@
 
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-      <td mat-cell *matCellDef="let row">{{dataSource.getRequestStatus(row.status)}}</td>
+      <td mat-cell *matCellDef="let row">{{helper.getRequestStatus(row.status)}}</td>
     </ng-container>
 
     <ng-container matColumnDef="requestId">
@@ -48,12 +46,12 @@
 
     <ng-container matColumnDef="dateOfLoss">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Loss</th>
-      <td mat-cell *matCellDef="let row">{{dataSource.formatDate(row.dateOfLoss)}}</td>
+      <td mat-cell *matCellDef="let row">{{helper.formatDate(row.dateOfLoss)}}</td>
     </ng-container>
 
     <ng-container matColumnDef="dateOfService">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Service</th>
-      <td mat-cell *matCellDef="let row">{{dataSource.formatDate(row.dateOfService)}}</td>
+      <td mat-cell *matCellDef="let row">{{helper.formatDate(row.dateOfService)}}</td>
     </ng-container>
     
     <ng-container matColumnDef="amount">

@@ -1,5 +1,8 @@
 export enum RequestStatusEnum {
-    New = 1,
-    Unziped = 2,
-    SavedToBlob = 3
+    SavedToAzure = 1,
+    Captured = 2,
+    Pending = 3,
+    Approved = 4
 }
+
+
