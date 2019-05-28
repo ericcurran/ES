@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using DbService;
 using Models;
 using Microsoft.AspNetCore.Authorization;
+using RecordsManagmentWeb.Models;
 
 namespace RecordsManagmentWeb.Controllers
 {
@@ -45,18 +46,25 @@ namespace RecordsManagmentWeb.Controllers
 
         // PUT: api/Request/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRequestPackage(int id, Request requestPackage)
+        public async Task<IActionResult> PutRequestPackage(int id, UpdateRequestModel model)
         {
-            if (id != requestPackage.Id)
+            if (model.Request == null || id != model.Request.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(requestPackage).State = EntityState.Modified;
+            _context.Entry(model.Request).State = EntityState.Modified;
 
             try
             {
                 await _context.SaveChangesAsync();
+                if (model.UpdateEf)
+                {
+                    var records = await _context.Records.Where(r => r.RequestId == model.Request.Id).ToListAsync();
+                    records.ForEach(r => r.EsRef = model.Request.EsRef);
+                    _context.Records.UpdateRange(records);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (DbUpdateConcurrencyException)
             {

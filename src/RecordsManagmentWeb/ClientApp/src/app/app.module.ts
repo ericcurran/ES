@@ -15,7 +15,7 @@ import { MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule,
          MatListModule, MatTableModule, MatPaginatorModule, MatSortModule,
          MatGridListModule, MatCardModule, MatMenuModule, MatCheckboxModule,
          MatInputModule, MatOptionModule, MatSelectModule, MatRadioModule,
-         MatDatepickerModule } from '@angular/material';
+         MatDatepickerModule, MatDialogModule } from '@angular/material';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { RequestsTableComponent } from './requests-table/requests-table.component';
 import { RecordsTableComponent } from './records-table/records-table.component';
@@ -24,7 +24,7 @@ import { AppHttpService } from './app-http.service';
 import { environment } from '../environments/environment';
 import { TokenInterceptor } from './token.interceptor';
 import { RecordComponent } from './records-table/record/record.component';
-import { RequestComponent } from './requests-table/request/request.component';
+import { RequestComponent, ConfirmComponent } from './requests-table/request/request.component';
 
 
 @NgModule({
@@ -35,7 +35,8 @@ import { RequestComponent } from './requests-table/request/request.component';
     RequestsTableComponent,
     RecordsTableComponent,
     RecordComponent,
-    RequestComponent
+    RequestComponent,
+    ConfirmComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -76,7 +77,8 @@ import { RequestComponent } from './requests-table/request/request.component';
     MatSelectModule,
     MatRadioModule,
     MatDatepickerModule,
-    MatMomentDateModule
+    MatMomentDateModule,
+    MatDialogModule
   ],
   providers: [AuthenticationGuard, AppHttpService, TokenInterceptor,
     {
@@ -86,6 +88,7 @@ import { RequestComponent } from './requests-table/request/request.component';
     },
     {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true }}
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [ConfirmComponent]
 })
 export class AppModule { }

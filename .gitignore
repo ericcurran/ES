@@ -264,3 +264,4 @@ __pycache__/
 *.pyc
 src/RecordsManagmentWeb/ClientApp/package-lock.json
 /ftp/processed
+/src/RecordsManagmentWeb/wwwroot

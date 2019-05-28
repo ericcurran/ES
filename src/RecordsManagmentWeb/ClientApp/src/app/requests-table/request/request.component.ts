@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { RequestDoc } from '../request';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { AppHttpService } from 'src/app/app-http.service';
-import { RequestsTableDataSource } from '../requests-table-datasource';
 import { RequestHelper } from '../request-helper';
 
 @Component({
@@ -13,9 +13,11 @@ import { RequestHelper } from '../request-helper';
 })
 export class RequestComponent implements OnInit {
 
-  helper:RequestHelper;
+  helper: RequestHelper;
+  private esRef: number;
 
-  constructor(private fb: FormBuilder,
+  constructor(public dialog: MatDialog,
+    private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private http: AppHttpService) { }
@@ -35,6 +37,7 @@ export class RequestComponent implements OnInit {
         .subscribe((r: RequestDoc) => {
           this.request = r;
           this.initForm(r);
+          this.esRef = r.esRef;
         },
           () => {
 
@@ -70,12 +73,48 @@ export class RequestComponent implements OnInit {
       this.request.dateOfLoss = this.helper.getIsoDateString(this.requestForm.controls['dateOfLoss'].value);
       this.request.dateOfService = this.helper.getIsoDateString(this.requestForm.controls['dateOfService'].value);
 
-      this.http.putRequest(this.request)
-        .subscribe(() => {
-          this.router.navigate(['/requests']);
-        });
-
+      if (this.esRef === this.request.esRef) {
+        this.updateRequest(this.request, false);
+      } else {
+        this.openDialog();
+      }
     }
+  }
+
+
+  private updateRequest(request: RequestDoc, updateEf: boolean) {
+    this.http.putRequest(request, updateEf)
+      .subscribe(() => {
+        this.router.navigate(['/requests']);
+      });
+  }
+
+  private openDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmComponent, {
+      width: '400px'
+    });
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      this.updateRequest(this.request, result);
+    });
+  }
+
+}
+
+
+@Component({
+  selector: 'app-confirm-component',
+  templateUrl: 'app-confirm-component.html',
+})
+export class ConfirmComponent {
+
+  constructor(public dialogRef: MatDialogRef<ConfirmComponent>) { }
+
+  onYesClick(): void {
+    this.dialogRef.close(true);
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close(false);
   }
 
 }

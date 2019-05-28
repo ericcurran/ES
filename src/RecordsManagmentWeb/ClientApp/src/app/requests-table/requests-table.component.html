@@ -86,7 +86,7 @@
     </ng-container>
 
     <ng-container matColumnDef="recordsLink">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Zip File</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Records</th>
       <td mat-cell *matCellDef="let row">
         <a [routerLink]="[ '/records', {id:row.id} ]">Records</a>        
       </td>

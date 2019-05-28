@@ -44,8 +44,8 @@ export class AppHttpService {
         return this.http.put(`/api/record/${row.id}`, row);
     }
 
-    putRequest(request: RequestDoc) {
-        return this.http.put(`/api/request/${request.id}`, request);
+    putRequest(request: RequestDoc, updateEf: boolean) {
+        return this.http.put(`/api/request/${request.id}`, { request: request, updateEf: updateEf });
     }
 }
 
