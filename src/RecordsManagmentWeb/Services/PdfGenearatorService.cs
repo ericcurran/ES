@@ -155,7 +155,7 @@ namespace RecordsManagmentWeb.Services
                                                {
                                                    FileName = f.FileName,
                                                    InLog = f.InLog,
-                                                   Log = f.InLog ? f.Log : null
+                                                   Log = f.InLog ? f.Log ?? "" : null
                                                })
                                                .ToListAsync();
             files.AddRange(recordFiles);

@@ -265,3 +265,6 @@ __pycache__/
 src/RecordsManagmentWeb/ClientApp/package-lock.json
 /ftp/processed
 /src/RecordsManagmentWeb/wwwroot
+/src/PdfGeneratorTs/dist
+/src/RecordsManagmentWeb/appsettings.Development.json
+/src/RecordsManagmentWeb/appsettings.Production.json

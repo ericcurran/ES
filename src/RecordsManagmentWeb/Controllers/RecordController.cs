@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DbService;
 using Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RecordsManagmentWeb.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class RecordController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

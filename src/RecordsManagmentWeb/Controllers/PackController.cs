@@ -5,17 +5,15 @@ using System.Linq;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-using DbService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.NodeServices;
 using RecordsManagmentWeb.Services;
 
 namespace RecordsManagmentWeb.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
+
     public class PackController : ControllerBase
     {
         [HttpPost("{id}")]   

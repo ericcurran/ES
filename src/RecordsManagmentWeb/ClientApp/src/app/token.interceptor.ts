@@ -18,24 +18,23 @@ export class TokenInterceptor implements HttpInterceptor {
     public accessToken: string;
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return next.handle(request);
-        
-        // const resource = this.adal.GetResourceForEndpoint(request.url);
-        // if (!resource || !this.adal.isAuthenticated) {
-        //     return next.handle(request);
-        // }
-        // request = request.clone({
-        //     setHeaders: {
-        //         Authorization: `Bearer ${this.accessToken}`
-        //     }
-        // });
-        // return this.adal.acquireToken(resource)
-        //     .pipe(
-        //         mergeMap((token: string) => {
-        //             const authorizedRequest = request.clone({
-        //                 headers: request.headers.set('Authorization', `Bearer ${token}`),
-        //             });
-        //             return next.handle(authorizedRequest);
-        //         }));
+                
+        const resource = this.adal.GetResourceForEndpoint(request.url);
+        if (!resource || !this.adal.isAuthenticated) {
+            return next.handle(request);
+        }
+        request = request.clone({
+            setHeaders: {
+                Authorization: `Bearer ${this.accessToken}`
+            }
+        });
+        return this.adal.acquireToken(resource)
+            .pipe(
+                mergeMap((token: string) => {
+                    const authorizedRequest = request.clone({
+                        headers: request.headers.set('Authorization', `Bearer ${token}`),
+                    });
+                    return next.handle(authorizedRequest);
+                }));
     }
 }
