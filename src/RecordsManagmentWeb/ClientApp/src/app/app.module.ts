@@ -45,12 +45,10 @@ import { RequestComponent, ConfirmComponent } from './requests-table/request/req
     FormsModule,
     ReactiveFormsModule,
     MsAdalAngular6Module.forRoot({
-      tenant: '',
-      clientId: '',
-      redirectUri: '',
-      endpoints: {
-
-      },
+      tenant: '1ad5568a-c025-4749-b1d4-868d82da39eb',
+      clientId: '72d46069-e00c-49c3-8821-1543b082a92b',
+      redirectUri: 'http://localhost:4200/requests',
+      endpoints: { },
       navigateToLoginRequestUrl: false,
       cacheLocation: 'localStorage',
     }),

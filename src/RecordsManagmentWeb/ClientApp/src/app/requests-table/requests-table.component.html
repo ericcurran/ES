@@ -10,7 +10,7 @@
     <ng-container matColumnDef="request">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Request</th>
       <td mat-cell *matCellDef="let row">
-        <a href="" (click)="onDetailsLinkCLick(row.deatilsFileName)">{{row.deatilsFileName}}</a>        
+        <button mat-button (click)="onDetailsLinkCLick(row.deatilsFileName)">{{row.deatilsFileName}}</button>        
       </td>
     </ng-container>
 

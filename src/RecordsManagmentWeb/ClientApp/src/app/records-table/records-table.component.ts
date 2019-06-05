@@ -40,7 +40,7 @@ export class RecordsTableComponent implements OnInit, AfterViewInit {
   }
 
   onDetailsLinkCLick(fileName: string) {
-    window.open(`https://casedocuments.blob.core.windows.net/documents-test/${fileName}`, '_blank');
+    return this.http.downloadFile(fileName);
   }
 
 
@@ -74,6 +74,5 @@ export class RecordsTableComponent implements OnInit, AfterViewInit {
 
     });
   }
-
 
 }

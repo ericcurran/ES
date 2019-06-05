@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { MsAdalAngular6Service } from 'microsoft-adal-angular6';
-import { TokenInterceptor } from '../token.interceptor';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -24,14 +23,9 @@ export class HomeComponent implements OnInit {
   );
 
   constructor(private breakpointObserver: BreakpointObserver,
-    private adal: MsAdalAngular6Service,
-    private interceptor: TokenInterceptor) { }
+    private adal: MsAdalAngular6Service) { }
 
   ngOnInit(): void {
-    if (this.adal.isAuthenticated && !this.interceptor.accessToken) {
-      this.adal.acquireToken(environment.webApiEndpoint).subscribe((t) => {
-        this.interceptor.accessToken = t;
-      });
-    }
+
   }
 }

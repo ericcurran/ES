@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -86,6 +87,15 @@ namespace RecordsManagmentWeb
             services.AddMvc()
                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            //var corsBuilder = new CorsPolicyBuilder()
+            //  .AllowAnyHeader()
+            //  .AllowAnyMethod()
+            //  .WithHeaders()
+            //  .AllowCredentials()
+            //  .AllowAnyOrigin();
+
+            services.AddCors();
+
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
@@ -116,7 +126,7 @@ namespace RecordsManagmentWeb
             //app.UseHttpsRedirection();
             app.UseFileServer();
             //app.UseCookiePolicy();
-
+            app.UseCors();
             app.UseAuthentication();
             app
             .UseMvc(routes =>

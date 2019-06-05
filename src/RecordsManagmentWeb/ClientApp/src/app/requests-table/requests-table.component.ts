@@ -12,35 +12,36 @@ import { RequestHelper } from './request-helper';
 export class RequestsTableComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  
+
   dataSource: RequestsTableDataSource;
-  helper:RequestHelper;
+  helper: RequestHelper;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['request', 'created', 'esRef', 'status', 'requestId', 'claimNumber',
-  'insured', 'dateOfLoss', 'dateOfService', 'amount', 'phase', 'requestPack', 'pdfPackName',
-   'open', 'recordsLink'];
+    'insured', 'dateOfLoss', 'dateOfService', 'amount', 'phase', 'requestPack', 'pdfPackName',
+    'open', 'recordsLink'];
 
-  constructor(private http: AppHttpService) {
+  constructor(private httpService: AppHttpService) {
   }
 
   ngOnInit() {
-    this.dataSource = new RequestsTableDataSource(this.paginator, this.sort, this.http);
+    this.dataSource = new RequestsTableDataSource(this.paginator, this.sort, this.httpService);
     this.helper = new RequestHelper();
   }
 
   onDetailsLinkCLick(deatilsFileName: string) {
-    window.open(`https://casedocuments.blob.core.windows.net/documents-test/${deatilsFileName}`, '_blank');
+    this.httpService.downloadFile(deatilsFileName);
   }
 
   onGenerateClick(id: number) {
-    this.http.generateReport(id)
-      .subscribe((fileName) => {
-        window.open(`https://casedocuments.blob.core.windows.net/documents-test/${fileName}`, '_blank');
+    this.httpService.generateReport(id)
+      .subscribe((fileName: string) => {
+        this.httpService.downloadFile(fileName);
       });
   }
 
   onGetPdfPack(fileName: string) {
-    window.open(`https://casedocuments.blob.core.windows.net/documents-test/${fileName}`, '_blank');
+    this.httpService.downloadFile(fileName);
   }
+
 }

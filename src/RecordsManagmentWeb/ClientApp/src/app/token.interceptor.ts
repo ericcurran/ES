@@ -18,7 +18,7 @@ export class TokenInterceptor implements HttpInterceptor {
     public accessToken: string;
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-                
+
         const resource = this.adal.GetResourceForEndpoint(request.url);
         if (!resource || !this.adal.isAuthenticated) {
             return next.handle(request);
