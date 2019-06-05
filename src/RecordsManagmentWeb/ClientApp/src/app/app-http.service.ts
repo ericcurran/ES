@@ -55,7 +55,7 @@ export class AppHttpService {
             responseType: 'blob' as 'json'
 
         };
-        this.http.get(`api/Storage/${fileName}`, options)
+        this.http.get(`/api/Storage/${fileName}`, options)
             .subscribe((result) => {
                 this.showFile(result, fileName);
             },
@@ -83,7 +83,20 @@ export class AppHttpService {
         // For other browsers:
         // Create a link pointing to the ObjectURL containing the blob.
         const data = window.URL.createObjectURL(newBlob);
-        window.open(data, '_blank');
+        // For other browsers:
+
+        const link = document.createElement('a');
+        link.href = data;
+        link.target = '_blank';
+        link.download = fileName;
+        // this is necessary as link.click() does not work on the latest firefox
+        link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+
+        setTimeout(function () {
+            // For Firefox it is necessary to delay revoking the ObjectURL
+            window.URL.revokeObjectURL(data);
+            link.remove();
+        }, 500);
     }
     GetBlobType(fileName: string): string {
         const nameParts = fileName.split('.');

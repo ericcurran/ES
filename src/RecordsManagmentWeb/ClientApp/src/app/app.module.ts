@@ -46,8 +46,8 @@ import { RequestComponent, ConfirmComponent } from './requests-table/request/req
     ReactiveFormsModule,
     MsAdalAngular6Module.forRoot({
       tenant: '1ad5568a-c025-4749-b1d4-868d82da39eb',
-      clientId: '72d46069-e00c-49c3-8821-1543b082a92b',
-      redirectUri: 'http://localhost:4200/requests',
+      clientId: '9e9241f6-2af7-4f7e-a22b-c732099ffa82',
+      redirectUri: 'http://recordsmanagement-sys.azurewebsites.net/requests',
       endpoints: { },
       navigateToLoginRequestUrl: false,
       cacheLocation: 'localStorage',
